@@ -1,50 +1,46 @@
 "use client";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // ─── Loop stages ─────────────────────────────────────────────────────────────
 const STAGES = [
   {
     id: "collection",
     label: "Data Collection",
-    icon: "sensors",
+    step: "01",
     color: "#22C55E",
-    glowColor: "rgba(34,197,94,0.4)",
-    desc: "Sensors capture real-world data: temperature, light, distance, air quality, water level.",
-    items: ["🌡️ Temperature", "💡 Light (LDR)", "📏 Ultrasonic", "💧 Turbidity"],
+    desc: "Sensors placed across the city capture real-world data — temperature, light, distance, air quality, water levels.",
+    shortDesc: "Sensors capture real-world data from the environment.",
   },
   {
     id: "analysis",
     label: "Analysis & Processing",
-    icon: "cloud",
+    step: "02",
     color: "#A78BFA",
-    glowColor: "rgba(167,139,250,0.4)",
-    desc: "Arduino processes sensor data, runs algorithms, and makes decisions in real time.",
-    items: ["🧠 Arduino Logic", "📊 Data Filtering", "⚙️ Decision Engine"],
+    desc: "Arduino microcontrollers process incoming data, run filtering algorithms, and make real-time decisions for the city.",
+    shortDesc: "Arduino processes data and makes real-time decisions.",
   },
   {
     id: "actions",
     label: "Real-Time Actions",
-    icon: "actuators",
+    step: "03",
     color: "#06B6D4",
-    glowColor: "rgba(6,182,212,0.4)",
-    desc: "Actuators respond: servos move, LEDs change, buzzers alert, relays switch.",
-    items: ["🔧 Servo Motors", "💡 Smart LEDs", "🔔 Buzzers", "🔌 Relays"],
+    desc: "Actuators respond to decisions: servos move barriers, LEDs change colors, buzzers alert citizens, relays switch systems on or off.",
+    shortDesc: "Actuators respond — servos, LEDs, buzzers, and relays take action.",
   },
   {
     id: "optimization",
     label: "Optimization & Improvement",
-    icon: "feedback",
+    step: "04",
     color: "#F59E0B",
-    glowColor: "rgba(245,158,11,0.4)",
-    desc: "The loop continues — each cycle refines the system for better city performance.",
-    items: [" Performance Tracking", "🔄 Continuous Feedback", "🎯 Fine Tuning"],
+    desc: "The loop repeats continuously — each cycle refines the system, improving traffic flow, energy use, and quality of life.",
+    shortDesc: "The loop repeats, continuously improving city performance.",
   },
 ];
 
-// ─── SVG Icon components ─────────────────────────────────────────────────────
+// ─── SVG Icons ───────────────────────────────────────────────────────────────
 function SensorIcon({ color }: { color: string }) {
   return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
       <circle cx="12" cy="12" r="3" />
       <path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12" />
     </svg>
@@ -53,7 +49,7 @@ function SensorIcon({ color }: { color: string }) {
 
 function CloudIcon({ color }: { color: string }) {
   return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
       <path d="M18 10a4 4 0 00-7.46-2A5 5 0 006 13a4 4 0 008 0" />
       <path d="M14 10h4" />
       <circle cx="16" cy="10" r="1" fill={color} />
@@ -63,7 +59,7 @@ function CloudIcon({ color }: { color: string }) {
 
 function ActuatorIcon({ color }: { color: string }) {
   return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
       <circle cx="12" cy="12" r="3" />
       <path d="M12 2v4M12 18v4M2 12h4M18 12h4" />
       <circle cx="12" cy="12" r="8" />
@@ -73,23 +69,23 @@ function ActuatorIcon({ color }: { color: string }) {
 
 function FeedbackIcon({ color }: { color: string }) {
   return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
       <path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9" />
     </svg>
   );
 }
 
 const IconMap: Record<string, React.FC<{ color: string }>> = {
-  sensors: SensorIcon,
-  cloud: CloudIcon,
-  actuators: ActuatorIcon,
-  feedback: FeedbackIcon,
+  collection: SensorIcon,
+  analysis: CloudIcon,
+  actions: ActuatorIcon,
+  optimization: FeedbackIcon,
 };
 
 // ─── Geometry helpers ─────────────────────────────────────────────────────────
-const RADIUS = 140; // loop radius
-const CENTER = 200; // SVG center
-const NODE_R = 36; // node circle radius
+const RADIUS = 140;
+const CENTER = 200;
+const NODE_R = 36;
 
 function getNodePos(index: number, total: number) {
   const angle = (Math.PI * 2 * index) / total - Math.PI / 2;
@@ -104,7 +100,6 @@ function Particle({ fromIdx, toIdx, color, delay }: { fromIdx: number; toIdx: nu
   const start = getNodePos(fromIdx, STAGES.length);
   const end = getNodePos(toIdx, STAGES.length);
 
-  // Calculate arc midpoint (perpendicular to chord)
   const mx = (start.x + end.x) / 2;
   const my = (start.y + end.y) / 2;
   const dx = end.x - start.x;
@@ -124,13 +119,101 @@ function Particle({ fromIdx, toIdx, color, delay }: { fromIdx: number; toIdx: nu
   );
 }
 
+// ─── Bento Box Component ─────────────────────────────────────────────────────
+function BentoBox({ stage, index, isActive }: { stage: typeof STAGES[0]; index: number; isActive: boolean }) {
+  const IconComp = IconMap[stage.id];
+
+  return (
+    <div
+      className="relative rounded-2xl p-5 transition-all duration-700 cursor-default overflow-hidden"
+      style={{
+        background: isActive ? `${stage.color}08` : "rgba(255,255,255,0.02)",
+        border: `1px solid ${isActive ? `${stage.color}30` : "rgba(255,255,255,0.06)"}`,
+        boxShadow: isActive
+          ? `0 0 40px ${stage.color}15, 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 ${stage.color}15`
+          : "0 2px 8px rgba(0,0,0,0.15)",
+        transform: isActive ? "translateY(-2px) scale(1.01)" : "none",
+      }}
+    >
+      {/* Top accent line */}
+      <div
+        className="absolute top-0 left-0 right-0 h-px transition-all duration-700"
+        style={{
+          background: isActive
+            ? `linear-gradient(90deg, transparent, ${stage.color}60, transparent)`
+            : "transparent",
+        }}
+      />
+
+      {/* Top-right glow blob */}
+      {isActive && (
+        <div
+          className="absolute -top-8 -right-8 w-24 h-24 rounded-full pointer-events-none transition-opacity duration-700"
+          style={{
+            background: `radial-gradient(circle, ${stage.color}12 0%, transparent 70%)`,
+            filter: "blur(12px)",
+          }}
+        />
+      )}
+
+      <div className="relative flex items-start gap-3">
+        {/* Step number */}
+        <div
+          className="text-[10px] font-mono tracking-wider flex-shrink-0 mt-0.5 transition-colors duration-500"
+          style={{ color: isActive ? `${stage.color}80` : "rgba(255,255,255,0.15)" }}
+        >
+          {stage.step}
+        </div>
+
+        {/* Icon */}
+        <div
+          className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-500"
+          style={{
+            background: isActive ? `${stage.color}15` : "rgba(255,255,255,0.04)",
+            border: `1px solid ${isActive ? `${stage.color}25` : "rgba(255,255,255,0.06)"}`,
+            transform: isActive ? "scale(1.1)" : "scale(1)",
+          }}
+        >
+          <IconComp color={isActive ? stage.color : "rgba(255,255,255,0.25)"} />
+        </div>
+
+        {/* Text */}
+        <div className="flex-1 min-w-0">
+          <h4
+            className="text-sm font-semibold mb-1 transition-colors duration-500"
+            style={{ color: isActive ? stage.color : "rgba(255,255,255,0.45)" }}
+          >
+            {stage.label}
+          </h4>
+          <p
+            className="text-xs leading-relaxed transition-colors duration-500"
+            style={{ color: isActive ? "rgba(255,255,255,0.55)" : "rgba(255,255,255,0.25)" }}
+          >
+            {stage.shortDesc}
+          </p>
+        </div>
+
+        {/* Active indicator dot */}
+        {isActive && (
+          <div
+            className="w-2 h-2 rounded-full flex-shrink-0 mt-1.5"
+            style={{
+              background: stage.color,
+              boxShadow: `0 0 8px ${stage.color}`,
+              animation: "pulse 2s ease-in-out infinite",
+            }}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function HowWeBuildSection() {
   const [activeStage, setActiveStage] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const timeRef = useRef(0);
-  const [, setTick] = useState(0);
 
   // Intersection observer
   useEffect(() => {
@@ -141,22 +224,14 @@ export default function HowWeBuildSection() {
     return () => obs.disconnect();
   }, []);
 
-  // Animation loop
+  // Auto-rotate active stage every 3s
   useEffect(() => {
     if (!isVisible) return;
-    let raf: number;
-    const animate = (ts: number) => {
-      timeRef.current = ts * 0.001;
-      setTick(Math.floor(ts / 100));
-      // Auto-rotate active stage every 3s
-      setActiveStage(Math.floor((ts * 0.001) / 3) % STAGES.length);
-      raf = requestAnimationFrame(animate);
-    };
-    raf = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(raf);
+    const interval = setInterval(() => {
+      setActiveStage((prev) => (prev + 1) % STAGES.length);
+    }, 3000);
+    return () => clearInterval(interval);
   }, [isVisible]);
-
-  const activeData = STAGES[activeStage];
 
   // Generate arc paths between nodes
   const arcs = STAGES.map((_, i) => {
@@ -172,7 +247,7 @@ export default function HowWeBuildSection() {
     const arcHeight = 25;
     const cpX = mx + perpX * arcHeight;
     const cpY = my + perpY * arcHeight;
-    return { from, to, cpX, cpY, path: `M ${from.x} ${from.y} Q ${cpX} ${cpY} ${to.x} ${to.y}` };
+    return { path: `M ${from.x} ${from.y} Q ${cpX} ${cpY} ${to.x} ${to.y}` };
   });
 
   return (
@@ -193,8 +268,8 @@ export default function HowWeBuildSection() {
           </p>
         </div>
 
-        {/* Loop diagram */}
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        {/* Loop + Bento Grid */}
+        <div className="grid lg:grid-cols-[1fr_1.2fr] gap-12 lg:gap-16 items-start">
 
           {/* Left: Animated SVG loop */}
           <div className={`relative flex items-center justify-center transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`} style={{ transitionDelay: "200ms" }}>
@@ -203,8 +278,8 @@ export default function HowWeBuildSection() {
               {/* Background glow */}
               <defs>
                 <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor={activeData.color} stopOpacity="0.15" />
-                  <stop offset="100%" stopColor={activeData.color} stopOpacity="0" />
+                  <stop offset="0%" stopColor={STAGES[activeStage].color} stopOpacity="0.15" />
+                  <stop offset="100%" stopColor={STAGES[activeStage].color} stopOpacity="0" />
                 </radialGradient>
                 <filter id="glow">
                   <feGaussianBlur stdDeviation="4" result="coloredBlur" />
@@ -219,9 +294,7 @@ export default function HowWeBuildSection() {
               {/* Arc connections */}
               {arcs.map((arc, i) => (
                 <g key={`arc-${i}`}>
-                  {/* Base arc */}
                   <path d={arc.path} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="3" strokeLinecap="round" />
-                  {/* Active arc glow */}
                   {i === activeStage && (
                     <path d={arc.path} fill="none" stroke={STAGES[i].color} strokeWidth="3" strokeLinecap="round" filter="url(#glow)" opacity="0.6">
                       <animate attributeName="stroke-dasharray" values="0 200;200 0" dur="1.5s" repeatCount="indefinite" />
@@ -230,7 +303,7 @@ export default function HowWeBuildSection() {
                 </g>
               ))}
 
-              {/* Animated particles along arcs */}
+              {/* Animated particles */}
               {STAGES.map((stage, i) => (
                 <g key={`particles-${i}`}>
                   <Particle fromIdx={i} toIdx={(i + 1) % STAGES.length} color={stage.color} delay={i * 0.75} />
@@ -239,14 +312,14 @@ export default function HowWeBuildSection() {
               ))}
 
               {/* Center text */}
-              <text x={CENTER} y={CENTER - 20} textAnchor="middle" fontSize="11" fill="rgba(255,255,255,0.4)" fontFamily="monospace">
+              <text x={CENTER} y={CENTER - 16} textAnchor="middle" fontSize="10" fill="rgba(255,255,255,0.35)" fontFamily="monospace" letterSpacing="1">
                 SMART CITY
               </text>
-              <text x={CENTER} y={CENTER} textAnchor="middle" fontSize="11" fill="rgba(255,255,255,0.4)" fontFamily="monospace">
+              <text x={CENTER} y={CENTER} textAnchor="middle" fontSize="10" fill="rgba(255,255,255,0.35)" fontFamily="monospace" letterSpacing="1">
                 FEEDBACK LOOP
               </text>
-              <g transform={`translate(${CENTER - 10}, ${CENTER + 12})`}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5">
+              <g transform={`translate(${CENTER - 9}, ${CENTER + 10})`}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5">
                   <path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9" />
                 </svg>
               </g>
@@ -255,8 +328,8 @@ export default function HowWeBuildSection() {
               {STAGES.map((stage, i) => {
                 const pos = getNodePos(i, STAGES.length);
                 const isActive = i === activeStage;
-                const IconComp = IconMap[stage.icon];
-                const pulseR = NODE_R + (isActive ? 12 : 0);
+                const IconComp = IconMap[stage.id];
+                const pulseR = NODE_R + 12;
 
                 return (
                   <g
@@ -273,7 +346,7 @@ export default function HowWeBuildSection() {
                       </circle>
                     )}
 
-                    {/* Node background */}
+                    {/* Node circle */}
                     <circle
                       cx={pos.x}
                       cy={pos.y}
@@ -286,7 +359,7 @@ export default function HowWeBuildSection() {
                     />
 
                     {/* Icon */}
-                    <g transform={`translate(${pos.x - 14}, ${pos.y - 14})`}>
+                    <g transform={`translate(${pos.x - 12}, ${pos.y - 12})`}>
                       <IconComp color={isActive ? stage.color : "rgba(255,255,255,0.3)"} />
                     </g>
 
@@ -295,10 +368,11 @@ export default function HowWeBuildSection() {
                       x={pos.x}
                       y={pos.y + NODE_R + 18}
                       textAnchor="middle"
-                      fontSize="9"
+                      fontSize="8"
                       fontWeight="600"
                       fill={isActive ? stage.color : "rgba(255,255,255,0.35)"}
                       fontFamily="'Space Grotesk', monospace"
+                      letterSpacing="0.5"
                       style={{ transition: "fill 0.5s ease" }}
                     >
                       {stage.label.toUpperCase()}
@@ -309,84 +383,11 @@ export default function HowWeBuildSection() {
             </svg>
           </div>
 
-          {/* Right: Detail panel */}
-          <div className={`transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`} style={{ transitionDelay: "400ms" }}>
-            <div
-              className="liquid-glass rounded-3xl overflow-hidden transition-all duration-500"
-              style={{ borderColor: `${activeData.color}25` }}
-            >
-              {/* Top shimmer */}
-              <div
-                className="h-px w-full"
-                style={{ background: `linear-gradient(90deg, transparent, ${activeData.color}40, transparent)` }}
-              />
-
-              <div className="px-7 pt-7 pb-7">
-                {/* Header */}
-                <div className="flex items-center gap-4 mb-6">
-                  <div
-                    className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-500"
-                    style={{
-                      background: `${activeData.color}15`,
-                      border: `1px solid ${activeData.color}25`,
-                      boxShadow: `0 0 30px ${activeData.glowColor}`,
-                    }}
-                  >
-                    {(() => {
-                      const IconComp = IconMap[activeData.icon];
-                      return <IconComp color={activeData.color} />;
-                    })()}
-                  </div>
-                  <div>
-                    <div className="text-[10px] font-mono tracking-widest uppercase mb-1" style={{ color: `${activeData.color}70` }}>
-                      Stage {activeStage + 1} of {STAGES.length}
-                    </div>
-                    <h3 className="font-display text-xl font-bold" style={{ color: activeData.color }}>
-                      {activeData.label}
-                    </h3>
-                  </div>
-                </div>
-
-                {/* Description */}
-                <p className="text-white/55 text-sm leading-relaxed mb-6">{activeData.desc}</p>
-
-                {/* Items */}
-                <div className="space-y-2.5">
-                  {activeData.items.map((item, i) => (
-                    <div
-                      key={item}
-                      className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm transition-all duration-300"
-                      style={{
-                        background: "rgba(255,255,255,0.03)",
-                        border: "1px solid rgba(255,255,255,0.06)",
-                        color: "rgba(255,255,255,0.6)",
-                        opacity: isVisible ? 1 : 0,
-                        transform: isVisible ? "none" : "translateX(20px)",
-                        transition: `all 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${i * 100}ms`,
-                      }}
-                    >
-                      <span className="text-base">{item.split(" ")[0]}</span>
-                      <span>{item.split(" ").slice(1).join(" ")}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Loop indicator */}
-                <div className="mt-6 flex items-center gap-2">
-                  {STAGES.map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setActiveStage(i)}
-                      className="h-1.5 rounded-full transition-all duration-300"
-                      style={{
-                        width: i === activeStage ? "32px" : "8px",
-                        background: i === activeStage ? activeData.color : "rgba(255,255,255,0.15)",
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
+          {/* Right: 2x2 Bento Grid */}
+          <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`} style={{ transitionDelay: "400ms" }}>
+            {STAGES.map((stage, i) => (
+              <BentoBox key={stage.id} stage={stage} index={i} isActive={i === activeStage} />
+            ))}
           </div>
         </div>
 
