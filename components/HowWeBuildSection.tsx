@@ -223,16 +223,14 @@ export default function HowWeBuildSection() {
     return () => obs.disconnect();
   }, []);
 
-  // Measure SVG to size bento boxes
+  // Size bento boxes to match SVG container height
   useEffect(() => {
-    if (!isVisible || !svgRef.current) return;
+    if (!isVisible) return;
     const measure = () => {
-      const svgEl = svgRef.current?.querySelector("svg");
-      if (svgEl) {
-        const w = svgEl.getBoundingClientRect().width;
-        // Each box = (width - gap) / 2 — scaled up 20%
-        setBoxSize(Math.max(190, ((w - 12) / 2) * 1.2));
-      }
+      // Fixed reference: SVG viewBox is 320x320, we want boxes to fill same space
+      // 2 boxes + 1 gap = 320px -> boxSize = (320 - 12) / 2 = 154
+      // Scale up for visual balance
+      setBoxSize(180);
     };
     measure();
     window.addEventListener("resize", measure);
@@ -286,9 +284,9 @@ export default function HowWeBuildSection() {
         {/* Loop + Bento Grid */}
         <div className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-16">
 
-          {/* Left: Animated SVG loop — same height as bento grid */}
-          <div ref={svgRef} className={`relative flex items-center justify-center transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`} style={{ transitionDelay: "200ms", height: boxSize * 2 + 12 }}>
-            <svg viewBox="0 0 400 400" className="w-full h-full" style={{ maxWidth: (boxSize * 2 + 12) * 1.3, maxHeight: boxSize * 2 + 12 }}>
+          {/* Left: Animated SVG loop */}
+          <div className={`relative transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`} style={{ transitionDelay: "200ms" }}>
+            <svg ref={svgRef} viewBox="20 20 360 390" className="w-full" style={{ maxWidth: (boxSize * 2 + 12) * 1.15 }}>
 
               {/* Background glow */}
               <defs>
@@ -398,8 +396,8 @@ export default function HowWeBuildSection() {
             </svg>
           </div>
 
-          {/* Right: 2x2 Bento Grid — perfectly square, same height as SVG */}
-          <div className={`flex flex-col items-center transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`} style={{ transitionDelay: "400ms" }}>
+          {/* Right: 2x2 Bento Grid */}
+          <div className={`transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`} style={{ transitionDelay: "400ms" }}>
             <div className="grid grid-cols-2 gap-3" style={{ width: boxSize * 2 + 12, height: boxSize * 2 + 12 }}>
               {STAGES.map((stage, i) => (
                 <BentoBox key={stage.id} stage={stage} index={i} isActive={i === activeStage} boxSize={boxSize} />
