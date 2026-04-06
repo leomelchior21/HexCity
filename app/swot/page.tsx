@@ -130,37 +130,37 @@ function SWOTCard({ data, index }: { data: typeof SWOT_DATA[0]; index: number })
       ref={ref}
       className="relative overflow-hidden transition-all duration-800"
       style={{
-        minHeight: 130,
-        background: `linear-gradient(135deg, rgba(10,10,14,0.9) 0%, ${data.glowColor} 60%, ${data.borderColor} 100%)`,
+        minHeight: 200,
+        background: `linear-gradient(180deg, rgba(10,10,14,0.95) 0%, ${data.glowColor} 100%)`,
         border: `1px solid ${data.borderColor}`,
         boxShadow: isVisible
           ? `0 0 50px ${data.glowColor}, 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 ${data.borderColor}40`
           : "0 2px 8px rgba(0,0,0,0.15)",
         opacity: isVisible ? 1 : 0,
-        transform: isVisible ? "translateX(0)" : "translateX(-40px)",
+        transform: isVisible ? "translateY(0)" : "translateY(30px)",
       }}
     >
-      {/* Left accent bar */}
+      {/* Top accent bar */}
       <div
-        className="absolute top-0 left-0 bottom-0 w-1"
+        className="absolute top-0 left-0 right-0 h-1"
         style={{
-          background: `linear-gradient(180deg, ${data.color}80, ${data.color}30, transparent)`,
+          background: `linear-gradient(90deg, ${data.color}80, ${data.color}30, transparent)`,
         }}
       />
 
-      {/* Top shimmer line */}
+      {/* Bottom shimmer line */}
       <div
-        className="absolute top-0 left-0 right-0 h-px"
+        className="absolute bottom-0 left-0 right-0 h-px"
         style={{
-          background: `linear-gradient(90deg, ${data.color}40, ${data.color}10, transparent)`,
+          background: `linear-gradient(90deg, transparent, ${data.color}10, ${data.color}40)`,
         }}
       />
 
-      {/* Right glow blob */}
+      {/* Bottom glow blob */}
       <div
-        className="absolute top-0 right-0 bottom-0 w-64 pointer-events-none"
+        className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
         style={{
-          background: `radial-gradient(ellipse at 100% 50%, ${data.glowColor} 0%, transparent 70%)`,
+          background: `radial-gradient(ellipse at 50% 100%, ${data.glowColor} 0%, transparent 70%)`,
         }}
       />
 
@@ -176,61 +176,60 @@ function SWOTCard({ data, index }: { data: typeof SWOT_DATA[0]; index: number })
         />
       )}
 
-      <div className="relative flex items-center gap-6 h-full px-7 py-6">
-        {/* Letter badge */}
-        <div
-          className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-500"
-          style={{
-            background: `${data.color}10`,
-            border: `1px solid ${data.color}30`,
-            boxShadow: isVisible ? `0 0 25px ${data.glowColor}` : "none",
-            animation: isVisible ? "badgePulse 3s ease-in-out infinite" : "none",
-          }}
-        >
-          <span
-            className="text-xl font-bold font-mono"
-            style={{ color: data.color }}
+      <div className="relative flex flex-col gap-4 h-full px-6 py-5">
+        {/* Letter badge + Icon */}
+        <div className="flex items-center gap-3">
+          <div
+            className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-500"
+            style={{
+              background: `${data.color}10`,
+              border: `1px solid ${data.color}30`,
+              boxShadow: isVisible ? `0 0 25px ${data.glowColor}` : "none",
+              animation: isVisible ? "badgePulse 3s ease-in-out infinite" : "none",
+            }}
           >
-            {data.letter}
-          </span>
-        </div>
-
-        {/* Icon + Content */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-3 mb-3">
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-              style={{
-                background: `${data.color}08`,
-              }}
-            >
-              <IconComp color={data.color} />
-            </div>
-            <h3
-              className="text-xl font-bold tracking-tight"
+            <span
+              className="text-lg font-bold font-mono"
               style={{ color: data.color }}
             >
-              {data.quadrant}
-            </h3>
+              {data.letter}
+            </span>
           </div>
 
-          {/* Prompts */}
-          <div className="space-y-1.5">
-            {data.prompts.map((prompt, i) => (
-              <p
-                key={i}
-                className="text-sm leading-relaxed"
-                style={{
-                  color: "rgba(255,255,255,0.42)",
-                  opacity: isVisible ? 1 : 0,
-                  transform: isVisible ? "translateY(0)" : "translateY(10px)",
-                  transition: `all 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${index * 120 + 300 + i * 100}ms`,
-                }}
-              >
-                {prompt}
-              </p>
-            ))}
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+            style={{
+              background: `${data.color}08`,
+            }}
+          >
+            <IconComp color={data.color} />
           </div>
+        </div>
+
+        {/* Title */}
+        <h3
+          className="text-2xl font-black tracking-tight"
+          style={{ color: data.color }}
+        >
+          {data.quadrant}
+        </h3>
+
+        {/* Prompts */}
+        <div className="space-y-1.5 mt-auto">
+          {data.prompts.map((prompt, i) => (
+            <p
+              key={i}
+              className="text-sm leading-relaxed"
+              style={{
+                color: "rgba(255,255,255,0.42)",
+                opacity: isVisible ? 1 : 0,
+                transform: isVisible ? "translateY(0)" : "translateY(10px)",
+                transition: `all 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${index * 120 + 400 + i * 100}ms`,
+              }}
+            >
+              {prompt}
+            </p>
+          ))}
         </div>
       </div>
     </div>
@@ -314,9 +313,9 @@ export default function SWOTPage() {
         </div>
       </div>
 
-      {/* SWOT Cards — vertical stack */}
+      {/* SWOT Cards — horizontal 4x1 grid */}
       <div className="flex-1 px-6 pb-24">
-        <div className="max-w-3xl mx-auto space-y-4">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
           {SWOT_DATA.map((data, i) => (
             <SWOTCard key={data.quadrant} data={data} index={i} />
           ))}
