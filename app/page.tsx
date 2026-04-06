@@ -42,10 +42,10 @@ export default function Home() {
       <TheProjectSection />
 
       <div className="section-divider" />
-      <MegaCitiesSection />
+      <HexFocusPointsSection />
 
       <div className="section-divider" />
-      <HexFocusPointsSection />
+      <MegaCitiesSection />
 
       <div className="section-divider" />
       <CityStructureSection />
