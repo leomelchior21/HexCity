@@ -212,7 +212,7 @@ export default function HowWeBuildSection() {
   const [isVisible, setIsVisible] = useState(false);
   const [boxSize, setBoxSize] = useState(200);
   const ref = useRef<HTMLDivElement>(null);
-  const svgRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Intersection observer
   useEffect(() => {
@@ -227,9 +227,9 @@ export default function HowWeBuildSection() {
   useEffect(() => {
     if (!isVisible) return;
     const measure = () => {
-      // Fixed reference: SVG viewBox is 320x320, we want boxes to fill same space
-      // 2 boxes + 1 gap = 320px -> boxSize = (320 - 12) / 2 = 154
-      // Scale up for visual balance
+      // Fixed reference: SVG viewBox is 360x390, we want boxes to fill same space
+      // 2 boxes + 1 gap = 390px -> boxSize = (390 - 12) / 2 = 189
+      // Use a fixed value for consistency
       setBoxSize(180);
     };
     measure();
@@ -285,8 +285,8 @@ export default function HowWeBuildSection() {
         <div className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-16">
 
           {/* Left: Animated SVG loop */}
-          <div className={`relative transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`} style={{ transitionDelay: "200ms" }}>
-            <svg ref={svgRef} viewBox="20 20 360 390" className="w-full" style={{ maxWidth: (boxSize * 2 + 12) * 1.15 }}>
+          <div ref={containerRef} className={`relative transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`} style={{ transitionDelay: "200ms" }}>
+            <svg viewBox="20 20 360 390" className="w-full" style={{ maxWidth: (boxSize * 2 + 12) * 1.15 }}>
 
               {/* Background glow */}
               <defs>
