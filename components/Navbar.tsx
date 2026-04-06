@@ -5,10 +5,10 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 const links = [
-  { href: "/",               label: "Home"           },
-  { href: "/design-thinking",label: "Design Thinking"},
-  { href: "/lab",            label: "Ardudeck"       },
-  { href: "/simulation",     label: "City Sim"       },
+  { href: "/",               label: "Home"     },
+  { href: "/design-thinking",label: "SWOT"      },
+  { href: "/lab",            label: "Ardudeck"  },
+  { href: "/simulation",     label: "City Sim"  },
 ];
 
 export default function Navbar() {
