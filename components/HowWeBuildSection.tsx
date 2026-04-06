@@ -8,39 +8,35 @@ const STAGES = [
     label: "Data Collection",
     step: "01",
     color: "#22C55E",
-    desc: "Sensors placed across the city capture real-world data — temperature, light, distance, air quality, water levels.",
-    shortDesc: "Sensors capture real-world data from the environment.",
+    desc: "Sensors capture real-world data from the environment.",
   },
   {
     id: "analysis",
     label: "Analysis & Processing",
     step: "02",
     color: "#A78BFA",
-    desc: "Arduino microcontrollers process incoming data, run filtering algorithms, and make real-time decisions for the city.",
-    shortDesc: "Arduino processes data and makes real-time decisions.",
+    desc: "Arduino processes data and makes real-time decisions.",
   },
   {
     id: "actions",
     label: "Real-Time Actions",
     step: "03",
     color: "#06B6D4",
-    desc: "Actuators respond to decisions: servos move barriers, LEDs change colors, buzzers alert citizens, relays switch systems on or off.",
-    shortDesc: "Actuators respond — servos, LEDs, buzzers, and relays take action.",
+    desc: "Actuators respond — servos, LEDs, buzzers, and relays take action.",
   },
   {
     id: "optimization",
     label: "Optimization & Improvement",
     step: "04",
     color: "#F59E0B",
-    desc: "The loop repeats continuously — each cycle refines the system, improving traffic flow, energy use, and quality of life.",
-    shortDesc: "The loop repeats, continuously improving city performance.",
+    desc: "The loop repeats, continuously improving city performance.",
   },
 ];
 
 // ─── SVG Icons ───────────────────────────────────────────────────────────────
 function SensorIcon({ color }: { color: string }) {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
       <circle cx="12" cy="12" r="3" />
       <path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12" />
     </svg>
@@ -49,7 +45,7 @@ function SensorIcon({ color }: { color: string }) {
 
 function CloudIcon({ color }: { color: string }) {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
       <path d="M18 10a4 4 0 00-7.46-2A5 5 0 006 13a4 4 0 008 0" />
       <path d="M14 10h4" />
       <circle cx="16" cy="10" r="1" fill={color} />
@@ -59,7 +55,7 @@ function CloudIcon({ color }: { color: string }) {
 
 function ActuatorIcon({ color }: { color: string }) {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
       <circle cx="12" cy="12" r="3" />
       <path d="M12 2v4M12 18v4M2 12h4M18 12h4" />
       <circle cx="12" cy="12" r="8" />
@@ -69,7 +65,7 @@ function ActuatorIcon({ color }: { color: string }) {
 
 function FeedbackIcon({ color }: { color: string }) {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
       <path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9" />
     </svg>
   );
@@ -120,19 +116,20 @@ function Particle({ fromIdx, toIdx, color, delay }: { fromIdx: number; toIdx: nu
 }
 
 // ─── Bento Box Component ─────────────────────────────────────────────────────
-function BentoBox({ stage, index, isActive }: { stage: typeof STAGES[0]; index: number; isActive: boolean }) {
+function BentoBox({ stage, index, isActive, boxSize }: { stage: typeof STAGES[0]; index: number; isActive: boolean; boxSize: number }) {
   const IconComp = IconMap[stage.id];
 
   return (
     <div
-      className="relative rounded-2xl p-5 transition-all duration-700 cursor-default overflow-hidden"
+      className="relative overflow-hidden transition-all duration-700 cursor-default"
       style={{
+        width: boxSize,
+        height: boxSize,
         background: isActive ? `${stage.color}08` : "rgba(255,255,255,0.02)",
         border: `1px solid ${isActive ? `${stage.color}30` : "rgba(255,255,255,0.06)"}`,
         boxShadow: isActive
           ? `0 0 40px ${stage.color}15, 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 ${stage.color}15`
           : "0 2px 8px rgba(0,0,0,0.15)",
-        transform: isActive ? "translateY(-2px) scale(1.01)" : "none",
       }}
     >
       {/* Top accent line */}
@@ -145,29 +142,29 @@ function BentoBox({ stage, index, isActive }: { stage: typeof STAGES[0]; index: 
         }}
       />
 
-      {/* Top-right glow blob */}
+      {/* Corner glow blob */}
       {isActive && (
         <div
-          className="absolute -top-8 -right-8 w-24 h-24 rounded-full pointer-events-none transition-opacity duration-700"
+          className="absolute -top-6 -right-6 w-20 h-20 rounded-full pointer-events-none"
           style={{
-            background: `radial-gradient(circle, ${stage.color}12 0%, transparent 70%)`,
-            filter: "blur(12px)",
+            background: `radial-gradient(circle, ${stage.color}10 0%, transparent 70%)`,
+            filter: "blur(10px)",
           }}
         />
       )}
 
-      <div className="relative flex items-start gap-3">
+      <div className="relative flex flex-col items-center justify-center h-full px-4 text-center gap-3">
         {/* Step number */}
         <div
-          className="text-[10px] font-mono tracking-wider flex-shrink-0 mt-0.5 transition-colors duration-500"
-          style={{ color: isActive ? `${stage.color}80` : "rgba(255,255,255,0.15)" }}
+          className="text-[10px] font-mono tracking-widest transition-colors duration-500"
+          style={{ color: isActive ? `${stage.color}70` : "rgba(255,255,255,0.12)" }}
         >
           {stage.step}
         </div>
 
         {/* Icon */}
         <div
-          className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-500"
+          className="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-500"
           style={{
             background: isActive ? `${stage.color}15` : "rgba(255,255,255,0.04)",
             border: `1px solid ${isActive ? `${stage.color}25` : "rgba(255,255,255,0.06)"}`,
@@ -177,26 +174,26 @@ function BentoBox({ stage, index, isActive }: { stage: typeof STAGES[0]; index: 
           <IconComp color={isActive ? stage.color : "rgba(255,255,255,0.25)"} />
         </div>
 
-        {/* Text */}
-        <div className="flex-1 min-w-0">
-          <h4
-            className="text-sm font-semibold mb-1 transition-colors duration-500"
-            style={{ color: isActive ? stage.color : "rgba(255,255,255,0.45)" }}
-          >
-            {stage.label}
-          </h4>
-          <p
-            className="text-xs leading-relaxed transition-colors duration-500"
-            style={{ color: isActive ? "rgba(255,255,255,0.55)" : "rgba(255,255,255,0.25)" }}
-          >
-            {stage.shortDesc}
-          </p>
-        </div>
+        {/* Label */}
+        <h4
+          className="text-[13px] font-semibold leading-tight transition-colors duration-500"
+          style={{ color: isActive ? stage.color : "rgba(255,255,255,0.45)" }}
+        >
+          {stage.label}
+        </h4>
+
+        {/* Description */}
+        <p
+          className="text-[11px] leading-relaxed transition-colors duration-500 max-w-[160px]"
+          style={{ color: isActive ? "rgba(255,255,255,0.55)" : "rgba(255,255,255,0.22)" }}
+        >
+          {stage.desc}
+        </p>
 
         {/* Active indicator dot */}
         {isActive && (
           <div
-            className="w-2 h-2 rounded-full flex-shrink-0 mt-1.5"
+            className="w-2 h-2 rounded-full"
             style={{
               background: stage.color,
               boxShadow: `0 0 8px ${stage.color}`,
@@ -213,7 +210,9 @@ function BentoBox({ stage, index, isActive }: { stage: typeof STAGES[0]; index: 
 export default function HowWeBuildSection() {
   const [activeStage, setActiveStage] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const [boxSize, setBoxSize] = useState(200);
   const ref = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<HTMLDivElement>(null);
 
   // Intersection observer
   useEffect(() => {
@@ -223,6 +222,22 @@ export default function HowWeBuildSection() {
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
+
+  // Measure SVG to size bento boxes
+  useEffect(() => {
+    if (!isVisible || !svgRef.current) return;
+    const measure = () => {
+      const svgEl = svgRef.current?.querySelector("svg");
+      if (svgEl) {
+        const w = svgEl.getBoundingClientRect().width;
+        // Each box = (width - gap) / 2
+        setBoxSize(Math.max(160, (w - 12) / 2));
+      }
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [isVisible]);
 
   // Auto-rotate active stage every 3s
   useEffect(() => {
@@ -269,11 +284,11 @@ export default function HowWeBuildSection() {
         </div>
 
         {/* Loop + Bento Grid */}
-        <div className="grid lg:grid-cols-[1fr_1.2fr] gap-12 lg:gap-16 items-start">
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-16">
 
           {/* Left: Animated SVG loop */}
-          <div className={`relative flex items-center justify-center transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`} style={{ transitionDelay: "200ms" }}>
-            <svg viewBox="0 0 400 400" className="w-full max-w-[420px]">
+          <div ref={svgRef} className={`relative flex items-center justify-center transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`} style={{ transitionDelay: "200ms" }}>
+            <svg viewBox="0 0 400 400" className="w-full" style={{ maxWidth: boxSize * 2 + 12 }}>
 
               {/* Background glow */}
               <defs>
@@ -383,11 +398,13 @@ export default function HowWeBuildSection() {
             </svg>
           </div>
 
-          {/* Right: 2x2 Bento Grid */}
-          <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`} style={{ transitionDelay: "400ms" }}>
-            {STAGES.map((stage, i) => (
-              <BentoBox key={stage.id} stage={stage} index={i} isActive={i === activeStage} />
-            ))}
+          {/* Right: 2x2 Bento Grid — perfectly square, same height as SVG */}
+          <div className={`flex flex-col items-center transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`} style={{ transitionDelay: "400ms" }}>
+            <div className="grid grid-cols-2 gap-3" style={{ width: boxSize * 2 + 12, height: boxSize * 2 + 12 }}>
+              {STAGES.map((stage, i) => (
+                <BentoBox key={stage.id} stage={stage} index={i} isActive={i === activeStage} boxSize={boxSize} />
+              ))}
+            </div>
           </div>
         </div>
 
