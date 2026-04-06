@@ -288,7 +288,7 @@ export default function HowWeBuildSection() {
 
           {/* Left: Animated SVG loop */}
           <div ref={svgRef} className={`relative flex items-center justify-center transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`} style={{ transitionDelay: "200ms" }}>
-            <svg viewBox="0 0 400 400" className="w-full" style={{ maxWidth: boxSize * 2 + 12 }}>
+            <svg viewBox="0 0 400 400" className="w-full" style={{ maxWidth: boxSize * 2 + 12, transform: "scale(1.3)", transformOrigin: "center center" }}>
 
               {/* Background glow */}
               <defs>
