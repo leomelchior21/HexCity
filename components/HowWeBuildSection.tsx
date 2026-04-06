@@ -230,8 +230,8 @@ export default function HowWeBuildSection() {
       const svgEl = svgRef.current?.querySelector("svg");
       if (svgEl) {
         const w = svgEl.getBoundingClientRect().width;
-        // Each box = (width - gap) / 2
-        setBoxSize(Math.max(160, (w - 12) / 2));
+        // Each box = (width - gap) / 2 — scaled up 20%
+        setBoxSize(Math.max(190, ((w - 12) / 2) * 1.2));
       }
     };
     measure();
