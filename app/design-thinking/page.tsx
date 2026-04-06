@@ -1,375 +1,355 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-const STAGES = [
+const SWOT_DATA = [
   {
-    n: "01",
-    key: "empathize",
-    label: "Empathize",
-    icon: "👁️",
-    color: "#06B6D4",
-    tagline: "Understand the people",
-    description: "Go to the streets. Talk to residents, drivers, city officials. Observe how people actually live with the problem — not how you imagine they do.",
-    hexcity: "Walk around your neighborhood. Document how traffic actually flows, where water is wasted, where energy is lost. Use your phone to photograph and record. The problem only exists in the real world.",
-    methods: ["Street observation", "User interviews", "Photo documentation", "Journey mapping"],
-    questions: [
-      "Who is most affected by this problem?",
-      "What do they do to workaround it today?",
-      "What frustrates them most?",
-      "What would make their day significantly better?",
-    ],
-    output: "User research notes, photos, empathy map",
-  },
-  {
-    n: "02",
-    key: "define",
-    label: "Define",
-    icon: "🎯",
-    color: "#7C3AED",
-    tagline: "Frame the right problem",
-    description: "Synthesize your research into a clear problem statement. A well-defined problem is already halfway solved. Avoid vague definitions.",
-    hexcity: "Write a Point of View (POV): [User] needs [need] because [insight]. Example: 'Commuters on Av. Paulista need to predict traffic density 10 minutes ahead because they lose an average of 47 minutes per day in unpredictable jams.'",
-    methods: ["POV statement", "SWOT analysis", "Affinity mapping", "Problem framing"],
-    questions: [
-      "What is the core problem (not symptom)?",
-      "Who specifically is affected?",
-      "What are the constraints? (budget, time, size)",
-      "How will we know if we solved it?",
-    ],
-    output: "POV statement, SWOT analysis, success metrics",
-  },
-  {
-    n: "03",
-    key: "ideate",
-    label: "Ideate",
-    icon: "💡",
-    color: "#F59E0B",
-    tagline: "Generate many solutions",
-    description: "Quantity over quality — first. Generate 20, 50, 100 ideas before judging any of them. Wild ideas often contain the seed of the best solution.",
-    hexcity: "Each team member writes 5 ideas in 5 minutes. No criticism allowed. Then share and build on each other's ideas. After 3 rounds, use the SWOT matrix to evaluate the top 5 candidates for your hex project.",
-    methods: ["Brainstorming", "SCAMPER", "Crazy 8s", "Mind mapping"],
-    questions: [
-      "What if resources were unlimited?",
-      "What would a 10-year-old invent?",
-      "How would nature solve this?",
-      "What's the complete opposite approach?",
-    ],
-    output: "Idea canvas, SWOT matrix, selected concept",
-  },
-  {
-    n: "04",
-    key: "prototype",
-    label: "Prototype",
-    icon: "🔧",
+    quadrant: "Strengths",
+    step: "S",
     color: "#22C55E",
-    tagline: "Build to think",
-    description: "A prototype is not a final product — it is a hypothesis made tangible. Build the simplest version that tests your key assumption.",
-    hexcity: "First, prototype in Tinkercad (digital circuit + Arduino code). Then build the physical hex. The goal is not perfection — it's learning. What breaks? What doesn't work as expected? That is valuable data.",
-    methods: ["Tinkercad simulation", "Breadboard circuit", "3D structure mock", "Code MVP"],
-    questions: [
-      "What is the ONE assumption we're testing?",
-      "What's the minimum version that tests it?",
-      "How will we know if it works?",
-      "What can we reuse from existing builds?",
+    glowColor: "rgba(34,197,94,0.3)",
+    icon: "shield",
+    prompts: [
+      "What does our solution do well?",
+      "What unique tech/skill do we have?",
+      "Why is our approach innovative?",
     ],
-    output: "Tinkercad simulation, physical prototype, test plan",
   },
   {
-    n: "05",
-    key: "test",
-    label: "Test",
-    icon: "🧪",
-    color: "#EC4899",
-    tagline: "Learn from failure fast",
-    description: "Put your prototype in front of real people and observe — without explaining it. Their confusion is your data. Iterate rapidly.",
-    hexcity: "Connect your hex to the city. Does it work with the neighboring hexes? Does the overall system behave as expected? Every failure is a lesson. Document what you changed and why.",
-    methods: ["User testing", "System integration test", "Stress testing", "Iteration log"],
-    questions: [
-      "Did it solve the problem we defined?",
-      "What broke unexpectedly?",
-      "What would users change?",
-      "Is the system integration stable?",
+    quadrant: "Weaknesses",
+    step: "W",
+    color: "#EF4444",
+    glowColor: "rgba(239,68,68,0.3)",
+    icon: "target",
+    prompts: [
+      "What limits our solution?",
+      "What resources are missing?",
+      "What could fail in our prototype?",
     ],
-    output: "Test results, iteration log, final presentation",
+  },
+  {
+    quadrant: "Opportunities",
+    step: "O",
+    color: "#06B6D4",
+    glowColor: "rgba(6,182,212,0.3)",
+    icon: "trending",
+    prompts: [
+      "How can we scale this?",
+      "What external support exists?",
+      "How does this help the city system?",
+    ],
+  },
+  {
+    quadrant: "Threats",
+    step: "T",
+    color: "#F59E0B",
+    glowColor: "rgba(245,158,11,0.3)",
+    icon: "alert",
+    prompts: [
+      "What could break this?",
+      "What external factors affect us?",
+      "What happens if integration fails?",
+    ],
   },
 ];
 
-const SWOT_TEMPLATE = [
-  { quadrant: "Strengths", color: "#22C55E", bg: "rgba(34,197,94,0.08)", border: "rgba(34,197,94,0.2)", items: ["What does our solution do well?", "What unique tech/skill do we have?", "Why is our approach innovative?"] },
-  { quadrant: "Weaknesses", color: "#EF4444", bg: "rgba(239,68,68,0.08)", border: "rgba(239,68,68,0.2)", items: ["What limits our solution?", "What resources are missing?", "What could fail in our prototype?"] },
-  { quadrant: "Opportunities", color: "#06B6D4", bg: "rgba(6,182,212,0.08)", border: "rgba(6,182,212,0.2)", items: ["How can we scale this?", "What external support exists?", "How does this help the city system?"] },
-  { quadrant: "Threats", color: "#F59E0B", bg: "rgba(245,158,11,0.08)", border: "rgba(245,158,11,0.2)", items: ["What could break this?", "What external factors affect us?", "What happens if integration fails?"] },
-];
+// ─── SVG Icons ───────────────────────────────────────────────────────────────
+function ShieldIcon({ color }: { color: string }) {
+  return (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      <path d="M9 12l2 2 4-4" />
+    </svg>
+  );
+}
 
+function TargetIcon({ color }: { color: string }) {
+  return (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
+      <circle cx="12" cy="12" r="10" />
+      <circle cx="12" cy="12" r="6" />
+      <circle cx="12" cy="12" r="2" />
+    </svg>
+  );
+}
+
+function TrendingIcon({ color }: { color: string }) {
+  return (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
+      <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+      <polyline points="16 7 22 7 22 13" />
+    </svg>
+  );
+}
+
+function AlertIcon({ color }: { color: string }) {
+  return (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
+      <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+      <line x1="12" y1="9" x2="12" y2="13" />
+      <line x1="12" y1="17" x2="12.01" y2="17" />
+    </svg>
+  );
+}
+
+const IconMap: Record<string, React.FC<{ color: string }>> = {
+  shield: ShieldIcon,
+  target: TargetIcon,
+  trending: TrendingIcon,
+  alert: AlertIcon,
+};
+
+// ─── Animated orbit ring ─────────────────────────────────────────────────────
+function OrbitRing({ color, delay, duration, size }: { color: string; delay: number; duration: number; size: number }) {
+  return (
+    <div
+      className="absolute pointer-events-none"
+      style={{
+        width: size,
+        height: size,
+        top: "50%",
+        left: "50%",
+        marginLeft: -size / 2,
+        marginTop: -size / 2,
+        borderRadius: "50%",
+        border: `1px solid ${color}15`,
+        animation: `rotateOrbit ${duration}s linear ${delay}s infinite`,
+        transformOrigin: "center center",
+      }}
+    >
+      <div
+        className="absolute rounded-full"
+        style={{
+          width: 5,
+          height: 5,
+          background: color,
+          boxShadow: `0 0 8px ${color}`,
+          top: -2.5,
+          left: "50%",
+          marginLeft: -2.5,
+        }}
+      />
+    </div>
+  );
+}
+
+// ─── SWOT Bento Box ──────────────────────────────────────────────────────────
+function SWOTBox({ data, index, isActive, boxSize }: { data: typeof SWOT_DATA[0]; index: number; isActive: boolean; boxSize: number }) {
+  const IconComp = IconMap[data.icon];
+
+  return (
+    <div
+      className="relative overflow-hidden transition-all duration-700 cursor-default"
+      style={{
+        width: boxSize,
+        height: boxSize,
+        background: isActive ? `${data.color}08` : "rgba(255,255,255,0.02)",
+        border: `1px solid ${isActive ? `${data.color}35` : "rgba(255,255,255,0.06)"}`,
+        boxShadow: isActive
+          ? `0 0 50px ${data.glowColor}, 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 ${data.color}15`
+          : "0 2px 8px rgba(0,0,0,0.15)",
+      }}
+    >
+      {/* Top accent line */}
+      <div
+        className="absolute top-0 left-0 right-0 h-px transition-all duration-700"
+        style={{
+          background: isActive
+            ? `linear-gradient(90deg, transparent, ${data.color}60, transparent)`
+            : "transparent",
+        }}
+      />
+
+      {/* Corner glow blob */}
+      {isActive && (
+        <div
+          className="absolute -top-10 -right-10 w-32 h-32 rounded-full pointer-events-none"
+          style={{
+            background: `radial-gradient(circle, ${data.color}12 0%, transparent 70%)`,
+            filter: "blur(16px)",
+          }}
+        />
+      )}
+
+      {/* Orbit animations */}
+      {isActive && (
+        <>
+          <OrbitRing color={data.color} delay={0} duration={6} size={boxSize * 0.9} />
+          <OrbitRing color={data.color} delay={3} duration={8} size={boxSize * 1.1} />
+        </>
+      )}
+
+      <div className="relative flex flex-col items-center justify-center h-full px-5 text-center gap-2">
+        {/* Step letter */}
+        <div
+          className="text-[10px] font-mono tracking-widest transition-colors duration-500"
+          style={{ color: isActive ? `${data.color}80` : "rgba(255,255,255,0.12)" }}
+        >
+          {data.step}
+        </div>
+
+        {/* Icon */}
+        <div
+          className="w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500"
+          style={{
+            background: isActive ? `${data.color}15` : "rgba(255,255,255,0.04)",
+            border: `1px solid ${isActive ? `${data.color}30` : "rgba(255,255,255,0.06)"}`,
+            transform: isActive ? "scale(1.1)" : "scale(1)",
+          }}
+        >
+          <IconComp color={isActive ? data.color : "rgba(255,255,255,0.25)"} />
+        </div>
+
+        {/* Label */}
+        <h4
+          className="text-[15px] font-semibold leading-tight transition-colors duration-500"
+          style={{ color: isActive ? data.color : "rgba(255,255,255,0.45)" }}
+        >
+          {data.quadrant}
+        </h4>
+
+        {/* Prompts */}
+        <div className="space-y-1.5 mt-1">
+          {data.prompts.map((prompt, i) => (
+            <p
+              key={i}
+              className="text-[10.5px] leading-relaxed transition-all duration-500"
+              style={{
+                color: isActive ? "rgba(255,255,255,0.55)" : "rgba(255,255,255,0.2)",
+                opacity: isActive ? 1 : 0.5,
+                transitionDelay: `${i * 100}ms`,
+              }}
+            >
+              {prompt}
+            </p>
+          ))}
+        </div>
+
+        {/* Active indicator dot */}
+        {isActive && (
+          <div
+            className="w-2 h-2 rounded-full mt-2"
+            style={{
+              background: data.color,
+              boxShadow: `0 0 10px ${data.color}`,
+              animation: "pulse 2s ease-in-out infinite",
+            }}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Main Page ───────────────────────────────────────────────────────────────
 export default function DesignThinkingPage() {
-  const [activeStage, setActiveStage] = useState(0);
-  const [activeTab, setActiveTab] = useState<"overview" | "swot">("overview");
-  const stage = STAGES[activeStage];
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [boxSize, setBoxSize] = useState(240);
+  const [isVisible, setIsVisible] = useState(false);
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  // Intersection observer
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
+
+  // Auto-rotate every 4s
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % SWOT_DATA.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Responsive box sizing
+  useEffect(() => {
+    const measure = () => {
+      if (window.innerWidth < 768) {
+        setBoxSize(Math.min(280, window.innerWidth * 0.42));
+      } else {
+        setBoxSize(240);
+      }
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
 
   return (
     <main className="min-h-screen flex flex-col">
       <Navbar />
 
       {/* Hero */}
-      <div className="pt-24 pb-12 px-6 relative overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[500px] rounded-full bg-hex-purple/8 blur-[120px] pointer-events-none" />
-        <div className="max-w-7xl mx-auto relative">
-          <div className="flex items-center gap-3 mb-6">
-            <span className="px-3 py-1 rounded-full bg-hex-purple/20 text-hex-purple-light text-xs font-medium tracking-widest uppercase border border-hex-purple/30">
-              Stanford d.school Method
-            </span>
-          </div>
+      <div className="pt-24 pb-8 px-6 relative overflow-hidden">
+        <div
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full pointer-events-none"
+          style={{
+            background: `radial-gradient(ellipse, ${SWOT_DATA[activeIndex].glowColor.replace("0.3", "0.08")} 0%, transparent 70%)`,
+            filter: "blur(80px)",
+            transition: "background 1s ease",
+          }}
+        />
+        <div className="max-w-7xl mx-auto relative text-center">
+          <span className="text-[11px] font-mono tracking-[0.3em] uppercase text-white/25 mb-3 block">
+            Strategic Analysis
+          </span>
           <h1 className="font-display text-5xl md:text-7xl font-bold mb-4 leading-none">
-            Design
-            <br />
-            <span className="gradient-text">Thinking.</span>
+            <span className="gradient-text">SWOT</span>{" "}
+            <span className="text-white/60">Analysis</span>
           </h1>
-          <p className="text-white/50 text-lg max-w-2xl mt-6">
-            The 5-stage framework that transforms problems into solutions. Applied to HEXCITY — from street observation to working prototype.
+          <p className="text-white/40 text-lg max-w-xl mx-auto mt-4">
+            Evaluate your HEXCITY project concept across four critical dimensions. Be honest — realistic assessment leads to better solutions.
           </p>
         </div>
       </div>
 
-      {/* Stage selector — horizontal timeline */}
-      <div className="px-6 pb-12">
-        <div className="max-w-7xl mx-auto">
-          <div className="glass rounded-2xl p-4 overflow-x-auto no-scrollbar">
-            <div className="flex gap-3 min-w-max">
-              {STAGES.map((s, i) => (
-                <button
-                  key={s.key}
-                  onClick={() => setActiveStage(i)}
-                  className={`flex items-center gap-3 px-5 py-3 rounded-xl text-sm font-medium transition-all ${
-                    activeStage === i ? "text-white" : "text-white/40 hover:text-white/70"
-                  }`}
-                  style={activeStage === i ? { background: `${s.color}20`, border: `1px solid ${s.color}40` } : { border: "1px solid transparent" }}
-                >
-                  <span className="text-xl">{s.icon}</span>
-                  <div className="text-left">
-                    <div className="text-xs opacity-50 font-mono">{s.n}</div>
-                    <div>{s.label}</div>
-                  </div>
-                  {activeStage === i && (
-                    <div className="w-1.5 h-1.5 rounded-full animate-pulse ml-1" style={{ background: s.color }} />
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
+      {/* Bento Grid */}
+      <div ref={gridRef} className="flex-1 flex items-center justify-center px-6 pb-20">
+        <div
+          className="grid grid-cols-2 gap-3 transition-all duration-1000"
+          style={{
+            opacity: isVisible ? 1 : 0,
+            transform: isVisible ? "translateY(0)" : "translateY(20px)",
+          }}
+        >
+          {SWOT_DATA.map((data, i) => (
+            <SWOTBox
+              key={data.quadrant}
+              data={data}
+              index={i}
+              isActive={i === activeIndex}
+              boxSize={boxSize}
+            />
+          ))}
         </div>
       </div>
 
-      {/* Stage detail */}
-      <div className="flex-1 px-6 pb-20">
-        <div className="max-w-7xl mx-auto">
-          {/* Tab switcher */}
-          <div className="flex gap-2 mb-8">
-            <button
-              onClick={() => setActiveTab("overview")}
-              className={`px-5 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "overview" ? "text-white" : "text-white/40 hover:text-white/60"}`}
-              style={activeTab === "overview" ? { background: `${stage.color}20`, border: `1px solid ${stage.color}40` } : {}}
-            >
-              Stage Overview
-            </button>
-            <button
-              onClick={() => setActiveTab("swot")}
-              className={`px-5 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === "swot" ? "text-white" : "text-white/40 hover:text-white/60"}`}
-              style={activeTab === "swot" ? { background: "rgba(124,58,237,0.2)", border: "1px solid rgba(124,58,237,0.4)" } : {}}
-            >
-              SWOT Analysis Tool
-            </button>
+      {/* Bottom insight */}
+      <div className="px-6 pb-16">
+        <div className="max-w-2xl mx-auto text-center">
+          <div
+            className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl text-sm"
+            style={{
+              background: "rgba(167,139,250,0.08)",
+              border: "1px solid rgba(167,139,250,0.20)",
+              color: "rgba(255,255,255,0.5)",
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" strokeWidth="2" strokeLinecap="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5z" />
+              <path d="M2 17l10 5 10-5" />
+              <path d="M2 12l10 5 10-5" />
+            </svg>
+            <span>
+              Use this framework to refine your hex design before prototyping.{" "}
+              <strong style={{ color: "#A78BFA" }}>Stronger analysis → better solutions.</strong>
+            </span>
           </div>
-
-          {activeTab === "overview" && (
-            <div className="grid lg:grid-cols-3 gap-8">
-              {/* Main card */}
-              <div className="lg:col-span-2 space-y-6">
-                {/* Header */}
-                <div className="glass rounded-2xl p-8 border" style={{ borderColor: `${stage.color}30` }}>
-                  <div className="flex items-start gap-5 mb-6">
-                    <div className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl flex-shrink-0" style={{ background: `${stage.color}18` }}>
-                      {stage.icon}
-                    </div>
-                    <div>
-                      <div className="text-xs font-mono font-bold mb-1 opacity-50" style={{ color: stage.color }}>{stage.n} / 05</div>
-                      <h2 className="font-display text-4xl font-bold mb-1">{stage.label}</h2>
-                      <p className="text-lg font-medium" style={{ color: stage.color }}>{stage.tagline}</p>
-                    </div>
-                  </div>
-                  <p className="text-white/65 leading-relaxed text-lg">{stage.description}</p>
-                </div>
-
-                {/* HexCity application */}
-                <div className="glass rounded-2xl p-8" style={{ borderLeft: `3px solid ${stage.color}` }}>
-                  <div className="flex items-center gap-2 mb-4">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke={stage.color} strokeWidth="2">
-                      <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2" />
-                    </svg>
-                    <span className="text-xs font-medium tracking-widest uppercase" style={{ color: stage.color }}>Applied to HEXCITY</span>
-                  </div>
-                  <p className="text-white/65 leading-relaxed">{stage.hexcity}</p>
-                </div>
-
-                {/* Key questions */}
-                <div className="glass rounded-2xl p-8">
-                  <h3 className="font-display font-bold text-lg mb-5 text-white">Key Questions</h3>
-                  <div className="space-y-3">
-                    {stage.questions.map((q, i) => (
-                      <div key={i} className="flex items-start gap-3">
-                        <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5" style={{ background: `${stage.color}20`, color: stage.color }}>
-                          {i + 1}
-                        </div>
-                        <p className="text-white/60 text-sm leading-relaxed">{q}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Sidebar */}
-              <div className="space-y-6">
-                {/* Methods */}
-                <div className="glass rounded-2xl p-6">
-                  <h3 className="font-display font-bold text-sm mb-4 text-white/70 uppercase tracking-widest">Methods</h3>
-                  <div className="space-y-2">
-                    {stage.methods.map((m) => (
-                      <div key={m} className="flex items-center gap-3 py-2 border-b border-white/5">
-                        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: stage.color }} />
-                        <span className="text-white/65 text-sm">{m}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Output */}
-                <div className="glass rounded-2xl p-6" style={{ borderColor: `${stage.color}25` }}>
-                  <h3 className="font-display font-bold text-sm mb-3 text-white/70 uppercase tracking-widest">Stage Output</h3>
-                  <p className="text-white/55 text-sm leading-relaxed">{stage.output}</p>
-                </div>
-
-                {/* Stage navigation */}
-                <div className="flex gap-2">
-                  {activeStage > 0 && (
-                    <button
-                      onClick={() => setActiveStage(activeStage - 1)}
-                      className="flex-1 py-3 rounded-xl glass border border-white/10 hover:border-white/20 text-white/60 hover:text-white text-sm font-medium transition-all flex items-center justify-center gap-2"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
-                      Back
-                    </button>
-                  )}
-                  {activeStage < STAGES.length - 1 && (
-                    <button
-                      onClick={() => setActiveStage(activeStage + 1)}
-                      className="flex-1 py-3 rounded-xl font-medium text-sm transition-all flex items-center justify-center gap-2 text-white"
-                      style={{ background: `${STAGES[activeStage + 1].color}25`, border: `1px solid ${STAGES[activeStage + 1].color}40` }}
-                    >
-                      Next: {STAGES[activeStage + 1].label}
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-                    </button>
-                  )}
-                </div>
-
-                {/* Flow visual */}
-                <div className="glass rounded-2xl p-5">
-                  <div className="text-xs text-white/25 uppercase tracking-widest mb-4">Process</div>
-                  {STAGES.map((s, i) => (
-                    <button
-                      key={s.key}
-                      onClick={() => setActiveStage(i)}
-                      className="w-full flex items-center gap-3 py-2 group"
-                    >
-                      <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-all" style={i === activeStage ? { background: s.color, color: "white" } : { background: `${s.color}15`, color: s.color }}>
-                        {i + 1}
-                      </div>
-                      <span className={`text-sm transition-all ${i === activeStage ? "text-white font-medium" : "text-white/35 group-hover:text-white/60"}`}>{s.label}</span>
-                      {i < STAGES.length - 1 && (
-                        <div className="flex-1 flex items-center">
-                          <div className="w-full h-px" style={{ background: i < activeStage ? s.color : "rgba(255,255,255,0.08)" }} />
-                        </div>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "swot" && <SWOTTool />}
         </div>
       </div>
 
       <Footer />
     </main>
-  );
-}
-
-function SWOTTool() {
-  const [values, setValues] = useState<Record<string, string>>({
-    Strengths: "", Weaknesses: "", Opportunities: "", Threats: "",
-  });
-
-  return (
-    <div>
-      <div className="mb-8">
-        <h2 className="font-display text-3xl font-bold mb-2">SWOT Analysis</h2>
-        <p className="text-white/45">Use this to evaluate your HEXCITY project concept. Be honest — a realistic SWOT leads to better solutions.</p>
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-4 mb-8">
-        {SWOT_TEMPLATE.map((q) => (
-          <div key={q.quadrant} className="rounded-2xl p-6 border" style={{ background: q.bg, borderColor: q.border }}>
-            <h3 className="font-display font-bold text-lg mb-1" style={{ color: q.color }}>{q.quadrant}</h3>
-            <div className="space-y-1.5 mb-4">
-              {q.items.map((item) => (
-                <p key={item} className="text-xs text-white/35 flex items-start gap-1.5">
-                  <span className="opacity-50">→</span> {item}
-                </p>
-              ))}
-            </div>
-            <textarea
-              className="w-full bg-black/20 border border-white/10 rounded-xl p-4 text-white/80 text-sm resize-none outline-none focus:border-opacity-60 transition-all placeholder-white/20"
-              style={{ borderColor: `${q.color}20` }}
-              rows={5}
-              placeholder={`Write your ${q.quadrant.toLowerCase()} here...`}
-              value={values[q.quadrant]}
-              onChange={(e) => setValues((v) => ({ ...v, [q.quadrant]: e.target.value }))}
-            />
-          </div>
-        ))}
-      </div>
-
-      {/* HMW statement generator */}
-      <div className="glass rounded-2xl p-8">
-        <h3 className="font-display font-bold text-xl mb-2">How Might We...?</h3>
-        <p className="text-white/40 text-sm mb-6">Turn your problem into a design challenge with this framing technique.</p>
-        <div className="glass rounded-xl p-6 border border-hex-purple/20">
-          <p className="text-white/50 text-sm mb-3">Example from your SWOT:</p>
-          <p className="text-white font-medium text-lg">
-            "How might we{" "}
-            <span className="text-hex-purple-light">[solve the weakness]</span>
-            {" "}while{" "}
-            <span className="text-hex-cyan">[leveraging the strength]</span>
-            {" "}to{" "}
-            <span className="text-hex-green">[capture the opportunity]</span>?"
-          </p>
-        </div>
-        <div className="mt-6 grid sm:grid-cols-3 gap-4">
-          {[
-            { label: "Narrow HMW", desc: "Too specific — limits solutions", example: "How might we add a solar panel to the roof?" },
-            { label: "Good HMW", desc: "Just right — opens possibilities", example: "How might we power this hex from renewable sources?" },
-            { label: "Broad HMW", desc: "Too vague — hard to act on", example: "How might we save the planet?" },
-          ].map((ex) => (
-            <div key={ex.label} className="glass rounded-xl p-4">
-              <div className="font-display font-bold text-xs text-white/60 mb-1">{ex.label}</div>
-              <div className="text-xs text-white/30 mb-3 italic">{ex.desc}</div>
-              <p className="text-white/55 text-xs leading-relaxed">"{ex.example}"</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
   );
 }

@@ -382,6 +382,11 @@ input[type="range"]::-moz-range-thumb {
   100% { transform: rotate(360deg); }
 }
 
+@keyframes rotateOrbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 .morph-blob {
   animation: morphBlob 8s ease-in-out infinite;
 }
