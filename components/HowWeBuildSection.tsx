@@ -286,9 +286,9 @@ export default function HowWeBuildSection() {
         {/* Loop + Bento Grid */}
         <div className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-16">
 
-          {/* Left: Animated SVG loop */}
-          <div ref={svgRef} className={`relative flex items-center justify-center transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`} style={{ transitionDelay: "200ms" }}>
-            <svg viewBox="0 0 400 400" className="w-full" style={{ maxWidth: (boxSize * 2 + 12) * 1.3 }}>
+          {/* Left: Animated SVG loop — same height as bento grid */}
+          <div ref={svgRef} className={`relative flex items-center justify-center transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`} style={{ transitionDelay: "200ms", height: boxSize * 2 + 12 }}>
+            <svg viewBox="0 0 400 400" className="w-full h-full" style={{ maxWidth: (boxSize * 2 + 12) * 1.3, maxHeight: boxSize * 2 + 12 }}>
 
               {/* Background glow */}
               <defs>
