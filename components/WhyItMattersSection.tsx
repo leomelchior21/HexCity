@@ -101,7 +101,7 @@ export default function WhyItMattersSection() {
           <h3 className="font-display text-3xl md:text-4xl font-bold mb-4">Ready to explore?</h3>
           <p className="text-white/50 mb-8">Access the Component Lab or open the city simulation.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <CTAButton href="/design-thinking" label="Design Thinking" />
+            <CTAButton href="/swot" label="SWOT Analysis" />
             <CTAButton href="/lab" label="Ardudeck" />
             <CTAButton href="/simulation" label="City Sim" />
           </div>

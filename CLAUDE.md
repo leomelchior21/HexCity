@@ -33,7 +33,7 @@ Interactive Next.js web platform for a 9th-grade smart city project. Students de
 | `/` | Home | Landing page — project hub |
 | `/lab` | Ardudeck | Arduino component simulator (NOT "Component Lab") |
 | `/simulation` | City Simulation | Hex city traffic/flow engine |
-| `/design-thinking` | Design Thinking | Process documentation |
+| `/swot` | SWOT Analysis | Strategic analysis framework |
 
 ## Design System
 - **Theme**: Deep black (`#000000`) — Behance award-winning aesthetic

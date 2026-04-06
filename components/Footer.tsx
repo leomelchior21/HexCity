@@ -14,7 +14,7 @@ export default function Footer() {
 
         <div className="flex items-center gap-6 text-sm text-white/30">
           <Link href="/" className="hover:text-white/60 transition-colors">Home</Link>
-          <Link href="/design-thinking" className="hover:text-white/60 transition-colors">Design Thinking</Link>
+          <Link href="/swot" className="hover:text-white/60 transition-colors">SWOT</Link>
           <Link href="/lab" className="hover:text-white/60 transition-colors">Ardudeck</Link>
           <Link href="/simulation" className="hover:text-white/60 transition-colors">City Sim</Link>
         </div>

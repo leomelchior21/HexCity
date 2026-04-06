@@ -8,8 +8,8 @@ const SWOT_DATA = [
     quadrant: "Strengths",
     letter: "S",
     color: "#22C55E",
-    glowColor: "rgba(34,197,94,0.15)",
-    edgeColor: "rgba(34,197,94,0.08)",
+    glowColor: "rgba(34,197,94,0.12)",
+    borderColor: "rgba(34,197,94,0.2)",
     icon: "shield",
     prompts: [
       "What does our solution do well?",
@@ -21,8 +21,8 @@ const SWOT_DATA = [
     quadrant: "Weaknesses",
     letter: "W",
     color: "#EF4444",
-    glowColor: "rgba(239,68,68,0.15)",
-    edgeColor: "rgba(239,68,68,0.08)",
+    glowColor: "rgba(239,68,68,0.12)",
+    borderColor: "rgba(239,68,68,0.2)",
     icon: "target",
     prompts: [
       "What limits our solution?",
@@ -34,8 +34,8 @@ const SWOT_DATA = [
     quadrant: "Opportunities",
     letter: "O",
     color: "#06B6D4",
-    glowColor: "rgba(6,182,212,0.15)",
-    edgeColor: "rgba(6,182,212,0.08)",
+    glowColor: "rgba(6,182,212,0.12)",
+    borderColor: "rgba(6,182,212,0.2)",
     icon: "trending",
     prompts: [
       "How can we scale this?",
@@ -47,8 +47,8 @@ const SWOT_DATA = [
     quadrant: "Threats",
     letter: "T",
     color: "#F59E0B",
-    glowColor: "rgba(245,158,11,0.15)",
-    edgeColor: "rgba(245,158,11,0.08)",
+    glowColor: "rgba(245,158,11,0.12)",
+    borderColor: "rgba(245,158,11,0.2)",
     icon: "alert",
     prompts: [
       "What could break this?",
@@ -61,7 +61,7 @@ const SWOT_DATA = [
 // ─── SVG Icons ───────────────────────────────────────────────────────────────
 function ShieldIcon({ color }: { color: string }) {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
       <path d="M9 12l2 2 4-4" />
     </svg>
@@ -70,7 +70,7 @@ function ShieldIcon({ color }: { color: string }) {
 
 function TargetIcon({ color }: { color: string }) {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
       <circle cx="12" cy="12" r="10" />
       <circle cx="12" cy="12" r="6" />
       <circle cx="12" cy="12" r="2" />
@@ -80,7 +80,7 @@ function TargetIcon({ color }: { color: string }) {
 
 function TrendingIcon({ color }: { color: string }) {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
       <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
       <polyline points="16 7 22 7 22 13" />
     </svg>
@@ -89,7 +89,7 @@ function TrendingIcon({ color }: { color: string }) {
 
 function AlertIcon({ color }: { color: string }) {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round">
       <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
       <line x1="12" y1="9" x2="12" y2="13" />
       <line x1="12" y1="17" x2="12.01" y2="17" />
@@ -104,8 +104,8 @@ const IconMap: Record<string, React.FC<{ color: string }>> = {
   alert: AlertIcon,
 };
 
-// ─── SWOT Bar Component ──────────────────────────────────────────────────────
-function SWOTBar({ data, index }: { data: typeof SWOT_DATA[0]; index: number }) {
+// ─── SWOT Card Component ─────────────────────────────────────────────────────
+function SWOTCard({ data, index }: { data: typeof SWOT_DATA[0]; index: number }) {
   const IconComp = IconMap[data.icon];
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -116,7 +116,7 @@ function SWOTBar({ data, index }: { data: typeof SWOT_DATA[0]; index: number }) 
     const obs = new IntersectionObserver(
       ([e]) => {
         if (e.isIntersecting) {
-          setTimeout(() => setIsVisible(true), index * 150);
+          setTimeout(() => setIsVisible(true), index * 120);
         }
       },
       { threshold: 0.1 }
@@ -128,29 +128,23 @@ function SWOTBar({ data, index }: { data: typeof SWOT_DATA[0]; index: number }) 
   return (
     <div
       ref={ref}
-      className="relative overflow-hidden transition-all duration-700"
+      className="relative overflow-hidden transition-all duration-800"
       style={{
-        minHeight: 110,
-        background: `linear-gradient(90deg, rgba(10,10,12,0.95) 0%, ${data.glowColor} 100%)`,
-        border: `1px solid ${data.color}18`,
-        boxShadow: `0 0 30px ${data.glowColor}, 0 4px 16px rgba(0,0,0,0.3)`,
+        minHeight: 130,
+        background: `linear-gradient(135deg, rgba(10,10,14,0.9) 0%, ${data.glowColor} 60%, ${data.borderColor} 100%)`,
+        border: `1px solid ${data.borderColor}`,
+        boxShadow: isVisible
+          ? `0 0 50px ${data.glowColor}, 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 ${data.borderColor}40`
+          : "0 2px 8px rgba(0,0,0,0.15)",
         opacity: isVisible ? 1 : 0,
-        transform: isVisible ? "translateX(0)" : "translateX(-30px)",
+        transform: isVisible ? "translateX(0)" : "translateX(-40px)",
       }}
     >
-      {/* Right edge glow gradient */}
+      {/* Left accent bar */}
       <div
-        className="absolute top-0 right-0 bottom-0 w-48 pointer-events-none"
+        className="absolute top-0 left-0 bottom-0 w-1"
         style={{
-          background: `linear-gradient(90deg, transparent 0%, ${data.edgeColor} 100%)`,
-        }}
-      />
-
-      {/* Left accent border */}
-      <div
-        className="absolute top-0 left-0 bottom-0 w-0.5"
-        style={{
-          background: `linear-gradient(180deg, transparent 0%, ${data.color}50 50%, transparent 100%)`,
+          background: `linear-gradient(180deg, ${data.color}80, ${data.color}30, transparent)`,
         }}
       />
 
@@ -158,35 +152,43 @@ function SWOTBar({ data, index }: { data: typeof SWOT_DATA[0]; index: number }) 
       <div
         className="absolute top-0 left-0 right-0 h-px"
         style={{
-          background: `linear-gradient(90deg, ${data.color}30, ${data.color}10, transparent)`,
+          background: `linear-gradient(90deg, ${data.color}40, ${data.color}10, transparent)`,
+        }}
+      />
+
+      {/* Right glow blob */}
+      <div
+        className="absolute top-0 right-0 bottom-0 w-64 pointer-events-none"
+        style={{
+          background: `radial-gradient(ellipse at 100% 50%, ${data.glowColor} 0%, transparent 70%)`,
         }}
       />
 
       {/* Animated scan line */}
       {isVisible && (
         <div
-          className="absolute top-0 left-0 right-0 h-px pointer-events-none"
+          className="absolute top-0 left-0 h-px pointer-events-none"
           style={{
-            background: `linear-gradient(90deg, transparent, ${data.color}40, transparent)`,
-            backgroundSize: "200% 100%",
-            animation: `shimmerLine 3s linear ${index * 0.5}s infinite`,
+            width: "40%",
+            background: `linear-gradient(90deg, transparent, ${data.color}50, transparent)`,
+            animation: `scanLine 4s ease-in-out ${index * 1}s infinite`,
           }}
         />
       )}
 
-      <div className="relative flex items-center gap-5 h-full px-6 py-5">
-        {/* Letter badge — pulsing */}
+      <div className="relative flex items-center gap-6 h-full px-7 py-6">
+        {/* Letter badge */}
         <div
-          className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-500"
+          className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-500"
           style={{
             background: `${data.color}10`,
-            border: `1px solid ${data.color}25`,
-            boxShadow: isVisible ? `0 0 20px ${data.glowColor}` : "none",
+            border: `1px solid ${data.color}30`,
+            boxShadow: isVisible ? `0 0 25px ${data.glowColor}` : "none",
             animation: isVisible ? "badgePulse 3s ease-in-out infinite" : "none",
           }}
         >
           <span
-            className="text-sm font-bold font-mono"
+            className="text-xl font-bold font-mono"
             style={{ color: data.color }}
           >
             {data.letter}
@@ -195,9 +197,9 @@ function SWOTBar({ data, index }: { data: typeof SWOT_DATA[0]; index: number }) 
 
         {/* Icon + Content */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2.5 mb-2.5">
+          <div className="flex items-center gap-3 mb-3">
             <div
-              className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+              className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
               style={{
                 background: `${data.color}08`,
               }}
@@ -205,7 +207,7 @@ function SWOTBar({ data, index }: { data: typeof SWOT_DATA[0]; index: number }) 
               <IconComp color={data.color} />
             </div>
             <h3
-              className="text-base font-semibold"
+              className="text-xl font-bold tracking-tight"
               style={{ color: data.color }}
             >
               {data.quadrant}
@@ -213,16 +215,16 @@ function SWOTBar({ data, index }: { data: typeof SWOT_DATA[0]; index: number }) 
           </div>
 
           {/* Prompts */}
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             {data.prompts.map((prompt, i) => (
               <p
                 key={i}
-                className="text-xs leading-relaxed"
+                className="text-sm leading-relaxed"
                 style={{
-                  color: "rgba(255,255,255,0.38)",
+                  color: "rgba(255,255,255,0.42)",
                   opacity: isVisible ? 1 : 0,
-                  transform: isVisible ? "translateY(0)" : "translateY(8px)",
-                  transition: `all 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${index * 150 + 300 + i * 80}ms`,
+                  transform: isVisible ? "translateY(0)" : "translateY(10px)",
+                  transition: `all 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${index * 120 + 300 + i * 100}ms`,
                 }}
               >
                 {prompt}
@@ -236,7 +238,7 @@ function SWOTBar({ data, index }: { data: typeof SWOT_DATA[0]; index: number }) 
 }
 
 // ─── Main Page ───────────────────────────────────────────────────────────────
-export default function DesignThinkingPage() {
+export default function SWOTPage() {
   const [isVisible, setIsVisible] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
 
@@ -256,17 +258,19 @@ export default function DesignThinkingPage() {
       <Navbar />
 
       {/* Hero */}
-      <div ref={heroRef} className="pt-28 pb-10 px-6 relative overflow-hidden">
+      <div ref={heroRef} className="pt-32 pb-14 px-6 relative overflow-hidden">
+        {/* Background glow */}
         <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] rounded-full pointer-events-none"
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] rounded-full pointer-events-none"
           style={{
-            background: "radial-gradient(ellipse, rgba(167,139,250,0.06) 0%, transparent 70%)",
-            filter: "blur(80px)",
+            background: "radial-gradient(ellipse, rgba(167,139,250,0.08) 0%, transparent 60%)",
+            filter: "blur(100px)",
           }}
         />
         <div className="max-w-4xl mx-auto relative text-center">
+          {/* Tag */}
           <span
-            className="text-[11px] font-mono tracking-[0.3em] uppercase text-white/20 mb-4 block transition-all duration-1000"
+            className="text-[11px] font-mono tracking-[0.35em] uppercase text-white/18 mb-6 block transition-all duration-1000"
             style={{
               opacity: isVisible ? 1 : 0,
               transform: isVisible ? "translateY(0)" : "translateY(10px)",
@@ -274,34 +278,47 @@ export default function DesignThinkingPage() {
           >
             Strategic Analysis
           </span>
+
+          {/* SWOT Title — big and bold */}
           <h1
-            className="font-display text-6xl md:text-8xl font-bold mb-6 leading-none transition-all duration-1000"
+            className="font-display text-8xl md:text-9xl font-black mb-6 leading-none tracking-tight transition-all duration-1000"
             style={{
               opacity: isVisible ? 1 : 0,
-              transform: isVisible ? "translateY(0) scale(1)" : "translateY(20px) scale(0.95)",
+              transform: isVisible ? "translateY(0) scale(1)" : "translateY(30px) scale(0.92)",
             }}
           >
-            <span className="gradient-text">SWOT</span>
+            <span
+              style={{
+                background: "linear-gradient(135deg, #A78BFA 0%, #22C55E 30%, #06B6D4 60%, #F59E0B 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              SWOT
+            </span>
           </h1>
+
+          {/* Subtitle */}
           <p
-            className="text-white/40 text-lg max-w-lg mx-auto transition-all duration-1000"
+            className="text-white/35 text-lg md:text-xl max-w-lg mx-auto leading-relaxed transition-all duration-1000"
             style={{
               opacity: isVisible ? 1 : 0,
               transform: isVisible ? "translateY(0)" : "translateY(10px)",
               transitionDelay: "200ms",
             }}
           >
-            Evaluate your HEXCITY project concept across four critical dimensions.
+            Evaluate your HEXCITY project across four critical dimensions.
             Realistic assessment leads to better solutions.
           </p>
         </div>
       </div>
 
-      {/* SWOT Bars — vertical stack */}
-      <div className="flex-1 px-6 pb-20">
-        <div className="max-w-3xl mx-auto space-y-3">
+      {/* SWOT Cards — vertical stack */}
+      <div className="flex-1 px-6 pb-24">
+        <div className="max-w-3xl mx-auto space-y-4">
           {SWOT_DATA.map((data, i) => (
-            <SWOTBar key={data.quadrant} data={data} index={i} />
+            <SWOTCard key={data.quadrant} data={data} index={i} />
           ))}
         </div>
       </div>
@@ -312,9 +329,9 @@ export default function DesignThinkingPage() {
           <div
             className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl text-sm"
             style={{
-              background: "rgba(167,139,250,0.08)",
-              border: "1px solid rgba(167,139,250,0.20)",
-              color: "rgba(255,255,255,0.5)",
+              background: "rgba(167,139,250,0.06)",
+              border: "1px solid rgba(167,139,250,0.15)",
+              color: "rgba(255,255,255,0.4)",
             }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" strokeWidth="2" strokeLinecap="round">
@@ -323,7 +340,7 @@ export default function DesignThinkingPage() {
               <path d="M2 12l10 5 10-5" />
             </svg>
             <span>
-              Use this framework to refine your hex design before prototyping.{" "}
+              Use this framework before prototyping.{" "}
               <strong style={{ color: "#A78BFA" }}>Stronger analysis → better solutions.</strong>
             </span>
           </div>
