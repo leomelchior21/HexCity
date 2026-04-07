@@ -1,10 +1,9 @@
 const steps = [
   { n: "01", label: "Brainstorm", icon: "💡", color: "#7C3AED", desc: "Free-form idea generation to solve a real urban problem in São Paulo." },
   { n: "02", label: "SWOT", icon: "⚖️", color: "#06B6D4", desc: "Analysis of strengths, weaknesses, opportunities and threats of the chosen solution." },
-  { n: "03", label: "Simulation", icon: "🖥️", color: "#8B5CF6", desc: "Virtual prototyping in Tinkercad — circuits and code before touching hardware." },
-  { n: "04", label: "Build", icon: "🔧", color: "#F59E0B", desc: "Physical construction of the hexagon: Arduino, sensors, actuators, structure and programming." },
-  { n: "05", label: "Integration", icon: "🔗", color: "#22C55E", desc: "All hexes connect. The entire system functions as a real city." },
-  { n: "06", label: "Exhibition", icon: "🏆", color: "#EF4444", desc: "Mostra Cultural — the public interacts with HEXCITY. Systems running live." },
+  { n: "03", label: "Build", icon: "🔧", color: "#F59E0B", desc: "Physical construction of the hexagon: Arduino, sensors, actuators, structure and programming." },
+  { n: "04", label: "Integration", icon: "🔗", color: "#22C55E", desc: "All hexes connect. The entire system functions as a real city." },
+  { n: "05", label: "Exhibition", icon: "🏆", color: "#EF4444", desc: "Mostra Cultural — the public interacts with HEXCITY. Systems running live." },
 ];
 
 export default function ProjectFlowSection() {
@@ -16,7 +15,7 @@ export default function ProjectFlowSection() {
           <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">
             Project <span className="gradient-text">Flow</span>
           </h2>
-          <p className="text-white/40 max-w-md mx-auto">From concept to city — 6 stages structuring the project</p>
+          <p className="text-white/40 max-w-md mx-auto">From concept to city — 5 stages structuring the project</p>
         </div>
 
         <div className="relative">
