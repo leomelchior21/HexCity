@@ -392,6 +392,11 @@ input[type="range"]::-moz-range-thumb {
   50% { transform: scale(1.05); }
 }
 
+@keyframes navPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.8); opacity: 0.3; }
+}
+
 @keyframes scanLine {
   0% { left: -40%; }
   50% { left: 100%; }

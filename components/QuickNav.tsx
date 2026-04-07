@@ -11,10 +11,11 @@ const sections = [
   { id: "why",        label: "Why It Matters" },
 ];
 
+const NAV_ITEM_HEIGHT = 36;
+
 export default function QuickNav() {
   const [active, setActive] = useState("");
   const [visible, setVisible] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(-1);
 
   useEffect(() => {
@@ -45,27 +46,13 @@ export default function QuickNav() {
 
   return (
     <div
-      ref={containerRef}
-      className={`fixed left-7 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col gap-3 transition-all duration-700 ${
+      className={`fixed left-7 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col transition-all duration-700 ${
         visible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-5 pointer-events-none"
       }`}
+      style={{
+        marginTop: -(sections.length * NAV_ITEM_HEIGHT) / 2,
+      }}
     >
-      {/* Track line */}
-      <div
-        className="absolute left-[5px] top-3 bottom-3 w-px"
-        style={{ background: "rgba(255,255,255,0.04)" }}
-      />
-      {/* Active indicator — sliding pill */}
-      {activeIndex >= 0 && (
-        <div
-          className="absolute left-[3px] w-[6px] rounded-full bg-white/60 transition-all duration-500 ease-out"
-          style={{
-            top: `${activeIndex * 32 + 12}px`,
-            height: "8px",
-            boxShadow: "0 0 8px rgba(255,255,255,0.3)",
-          }}
-        />
-      )}
       {sections.map((s, i) => (
         <NavDot key={s.id} section={s} isActive={active === s.id} index={i} />
       ))}
@@ -93,27 +80,56 @@ function NavDot({
       onClick={scrollTo}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="flex items-center gap-2.5 group"
+      className="flex items-center group"
       title={section.label}
       style={{
-        transitionDelay: isActive ? "0ms" : `${index * 30}ms`,
+        height: NAV_ITEM_HEIGHT,
       }}
     >
+      {/* Dot */}
+      <div className="relative w-3 flex items-center justify-center">
+        {/* Track line */}
+        {index > 0 && (
+          <div
+            className="absolute top-0 left-1/2 -translate-x-1/2 w-px"
+            style={{
+              height: NAV_ITEM_HEIGHT,
+              background: "rgba(255,255,255,0.06)",
+              top: -NAV_ITEM_HEIGHT / 2,
+            }}
+          />
+        )}
+
+        {/* Active ring */}
+        {isActive && (
+          <div
+            className="absolute w-3 h-3 rounded-full transition-all duration-500"
+            style={{
+              border: "1px solid rgba(255,255,255,0.3)",
+              animation: "navPulse 2s ease-in-out infinite",
+            }}
+          />
+        )}
+
+        {/* Dot circle */}
+        <div
+          className="rounded-full transition-all duration-300 relative z-10"
+          style={{
+            width: isActive ? 8 : hovered ? 6 : 3,
+            height: isActive ? 8 : hovered ? 6 : 3,
+            background: isActive
+              ? "#ffffff"
+              : hovered
+              ? "rgba(255,255,255,0.55)"
+              : "rgba(255,255,255,0.18)",
+            boxShadow: isActive ? "0 0 10px rgba(255,255,255,0.4)" : "none",
+          }}
+        />
+      </div>
+
+      {/* Label */}
       <div
-        className="rounded-full flex-shrink-0 transition-all duration-300"
-        style={{
-          width:  isActive ? 8 : hovered ? 6 : 3,
-          height: isActive ? 8 : hovered ? 6 : 3,
-          background: isActive
-            ? "#ffffff"
-            : hovered
-            ? "rgba(255,255,255,0.55)"
-            : "rgba(255,255,255,0.15)",
-          boxShadow: isActive ? "0 0 8px rgba(255,255,255,0.35)" : "none",
-        }}
-      />
-      <div
-        className="overflow-hidden transition-all duration-300 ease-out"
+        className="overflow-hidden transition-all duration-300 ease-out ml-2.5"
         style={{ maxWidth: show ? "140px" : "0px", opacity: show ? 1 : 0 }}
       >
         <span
