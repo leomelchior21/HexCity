@@ -265,7 +265,7 @@ export default function HowWeBuildSection() {
 
   return (
     <section id="build" ref={ref} className="relative py-32 px-6 md:px-16 overflow-hidden" style={{ background: "radial-gradient(ellipse 70% 50% at 50% 50%, rgba(6,182,212,0.04) 0%, #06080e 100%)" }}>
-      <div className="max-w-6xl mx-auto relative">
+      <div className="max-w-5xl mx-auto relative">
 
         {/* Header */}
         <div className={`text-center mb-16 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`}>

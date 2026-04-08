@@ -5,7 +5,7 @@ const sections = [
   { id: "project",    label: "The Project"    },
   { id: "focus",      label: "Focus Points"   },
   { id: "megacities", label: "Mega Cities"    },
-  { id: "structure",  label: "CitySim Invite" },
+  { id: "citysim-invite", label: "CitySim Invite" },
   { id: "flow",       label: "Project Flow"   },
   { id: "build",      label: "Feedback Loop"  },
   { id: "why",        label: "Why It Matters" },

@@ -68,5 +68,5 @@ Each HexCity is evaluated on 6 focus areas:
 ## Important Notes
 - The `/lab` page is called **"Ardudeck"** — not "Component Lab"
 - Never use `max-w-7xl` for content containers — use `max-w-5xl` for wider side margins
-- The landing page timeline section was replaced with: TheProject + MegaCities + HexFocusPoints
-- Sections order on home page: Hero → TheProject → MegaCities → HexFocusPoints → CityStructure → ProjectFlow → HowWeBuild → WhyItMatters
+- The landing page timeline section was replaced with: TheProject + HexFocusPoints + MegaCities
+- Sections order on home page: Hero → TheProject → HexFocusPoints → MegaCities → CityStructure → ProjectFlow → HowWeBuild → WhyItMatters

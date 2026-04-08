@@ -44,7 +44,6 @@ export default function SimulationPage() {
   const [zoom, setZoom] = useState(1);
   const [paused, setPaused] = useState(false);
   const [dayNight, setDayNight] = useState(0.5);
-  const [showHeatmap, setShowHeatmap] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [stats, setStats] = useState({ congestion: 0, avgSpeed: 0, efficiency: 0, total: 0 });
   const [selectedEntity, setSelectedEntity] = useState<{
@@ -82,7 +81,6 @@ export default function SimulationPage() {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === " ") { e.preventDefault(); setPaused(p => !p); }
-      if (e.key === "h") setShowHeatmap(v => !v);
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
@@ -110,7 +108,6 @@ export default function SimulationPage() {
             </div>
             <div className="hidden md:flex items-center gap-2 text-[10px] text-white/20 font-mono">
               <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10">Space</kbd> Pause
-              <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 ml-2">H</kbd> Heatmap
             </div>
           </div>
         </div>
@@ -157,7 +154,7 @@ export default function SimulationPage() {
                     targets={targets}
                     paused={paused}
                     dayNight={dayNight}
-                    showHeatmap={showHeatmap}
+                    showHeatmap={false}
                     speed={speed}
                     onStatsChange={handleStats}
                     canvasRef={canvasRef}
@@ -437,19 +434,6 @@ export default function SimulationPage() {
                   </div>
                 </ControlCard>
 
-                {/* Toggles */}
-                <ControlCard label="Overlay">
-                  <button
-                    onClick={() => setShowHeatmap(v => !v)}
-                    className={`w-full py-2 rounded-lg text-[10px] font-medium transition-all ${
-                      showHeatmap
-                        ? "bg-red-500/20 border border-red-500/30 text-red-400"
-                        : "bg-white/3 text-white/25 border border-transparent hover:bg-white/6"
-                    }`}
-                  >
-                    🔥 Congestion Heatmap
-                  </button>
-                </ControlCard>
               </div>
             </div>
           </div>

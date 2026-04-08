@@ -99,7 +99,7 @@ export default function WhyItMattersSection() {
           className={`liquid-glass-purple rounded-3xl p-12 transition-all duration-1000 ease-out ${ctaInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`}
         >
           <h3 className="font-display text-3xl md:text-4xl font-bold mb-4">Ready to explore?</h3>
-          <p className="text-white/50 mb-8">Access the Component Lab or open the city simulation.</p>
+          <p className="text-white/50 mb-8">Access the Ardudeck or open the city simulation.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <CTAButton href="/swot" label="SWOT Analysis" />
             <CTAButton href="/lab" label="Ardudeck" />
