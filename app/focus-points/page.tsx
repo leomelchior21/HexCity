@@ -507,15 +507,20 @@ export default function FocusPointsPage() {
   // Circular positions: index 0 at top (-90°), clockwise
   const hexPositions = FOCUS_POINTS.map((_, i) => {
     const angle = (Math.PI / 3) * i - Math.PI / 2;
-    const radius = 155;
+    const radius = 170;
     return {
       x: Math.cos(angle) * radius,
       y: Math.sin(angle) * radius,
     };
   });
 
+  const CONTAINER_SIZE = 460;
+  const CENTER = CONTAINER_SIZE / 2;
+  const HEX_SIZE = 72;
+  const HALF_HEX = HEX_SIZE / 2;
+
   return (
-    <main className="min-h-screen bg-[#020202] overflow-hidden relative">
+    <main className="min-h-screen bg-[#020202] overflow-hidden relative flex flex-col">
       {/* Background ambient glow */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -538,13 +543,13 @@ export default function FocusPointsPage() {
       />
 
       {/* Header */}
-      <header className="relative z-10 pt-8 pb-4 px-8">
+      <header className="relative z-10 pt-6 pb-2 px-8 flex-shrink-0">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div>
             <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-white/20 block mb-1">
               HEXCITY · INTERACTIVE
             </span>
-            <h1 className="font-display text-4xl md:text-5xl font-bold">
+            <h1 className="font-display text-3xl md:text-4xl font-bold">
               HEX <span className="gradient-text">FOCUS POINTS</span>
             </h1>
           </div>
@@ -563,17 +568,22 @@ export default function FocusPointsPage() {
       </header>
 
       {/* Main Interactive Area */}
-      <div className="relative z-10 flex flex-col items-center justify-center" style={{ minHeight: "calc(100vh - 120px)" }}>
+      <div className="relative z-10 flex-1 flex items-center justify-center">
         {/* Hexagon Ring */}
-        <div className="relative" style={{ width: 400, height: 400 }}>
+        <div className="relative" style={{ width: CONTAINER_SIZE, height: CONTAINER_SIZE }}>
           {/* Center info */}
           <div
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none"
-            style={{ zIndex: 5 }}
+            className="absolute text-center pointer-events-none"
+            style={{
+              left: CENTER - 60,
+              top: CENTER - 50,
+              width: 120,
+              zIndex: 5,
+            }}
           >
             {/* Center glow circle */}
             <div
-              className="w-20 h-20 mx-auto mb-3 rounded-full flex items-center justify-center relative"
+              className="w-16 h-16 mx-auto mb-2 rounded-full flex items-center justify-center relative"
               style={{
                 background: `${activeFp.color}08`,
                 border: `1px solid ${activeFp.color}20`,
@@ -582,43 +592,49 @@ export default function FocusPointsPage() {
               }}
             >
               {/* Center icon */}
-              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke={activeFp.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: "stroke 0.4s ease" }}>
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke={activeFp.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: "stroke 0.4s ease" }}>
                 <path d={activeFp.iconPath} />
               </svg>
 
               {/* Subtle orbit ring */}
               <div
-                className="absolute inset-[-8px] rounded-full border border-white/[0.04]"
+                className="absolute inset-[-6px] rounded-full border border-white/[0.04]"
                 style={{ animation: "spin 20s linear infinite" }}
               />
             </div>
 
             <span
-              className="text-2xl font-display font-bold block transition-colors duration-400"
+              className="text-xl font-display font-bold block transition-colors duration-400"
               style={{ color: activeFp.color }}
             >
               {activeFp.label.toUpperCase()}
             </span>
-            <span className="text-[10px] font-mono tracking-widest text-white/20 mt-1 block">
+            <span className="text-[9px] font-mono tracking-widest text-white/20 mt-0.5 block">
               TAP TO EXPLORE
             </span>
           </div>
 
-          {/* Connecting lines from center to each hex */}
+          {/* Connecting lines from center to hex edge */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
-            {hexPositions.map((pos, i) => (
-              <line
-                key={i}
-                x1="200"
-                y1="200"
-                x2={200 + pos.x}
-                y2={200 + pos.y}
-                stroke={i === activeIndex ? activeFp.color : "rgba(255,255,255,0.05)"}
-                strokeWidth={i === activeIndex ? 1.5 : 1}
-                strokeDasharray={i === activeIndex ? "none" : "4 4"}
-                style={{ transition: "all 0.5s ease" }}
-              />
-            ))}
+            {hexPositions.map((pos, i) => {
+              // Stop line at hex edge: distance from center to hex edge = radius - halfHex
+              const lineLen = radius - HALF_HEX;
+              const endX = CENTER + pos.x * (lineLen / radius);
+              const endY = CENTER + pos.y * (lineLen / radius);
+              return (
+                <line
+                  key={i}
+                  x1={CENTER}
+                  y1={CENTER}
+                  x2={endX}
+                  y2={endY}
+                  stroke={i === activeIndex ? activeFp.color : "rgba(255,255,255,0.05)"}
+                  strokeWidth={i === activeIndex ? 1.5 : 1}
+                  strokeDasharray={i === activeIndex ? "none" : "4 4"}
+                  style={{ transition: "all 0.5s ease" }}
+                />
+              );
+            })}
           </svg>
 
           {/* Hex buttons */}
@@ -629,26 +645,26 @@ export default function FocusPointsPage() {
               <button
                 key={fp.id}
                 onClick={() => handleTap(i)}
-                className="absolute flex flex-col items-center gap-2 group"
+                className="absolute flex flex-col items-center gap-1.5 group"
                 style={{
-                  left: 200 + pos.x - 40,
-                  top: 200 + pos.y - 40,
-                  width: 80,
+                  left: CENTER + pos.x - HALF_HEX,
+                  top: CENTER + pos.y - HALF_HEX,
+                  width: HEX_SIZE,
                   zIndex: isActive ? 10 : 2,
-                  transform: isActive ? "scale(1.10)" : "scale(1)",
+                  transform: isActive ? "scale(1.08)" : "scale(1)",
                   transition: "transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
                 }}
               >
                 <HexShape
-                  size={80}
+                  size={HEX_SIZE}
                   color={fp.color}
                   active={isActive}
                   pulsing={isActive}
                   number={fp.number}
                 />
                 <span
-                  className="text-[10px] font-semibold tracking-wider uppercase transition-colors duration-300"
-                  style={{ color: isActive ? fp.color : "rgba(255,255,255,0.30)" }}
+                  className="text-[9px] font-semibold tracking-wider uppercase transition-colors duration-300 whitespace-nowrap"
+                  style={{ color: isActive ? fp.color : "rgba(255,255,255,0.28)" }}
                 >
                   {fp.label}
                 </span>
@@ -656,28 +672,28 @@ export default function FocusPointsPage() {
             );
           })}
         </div>
+      </div>
 
-        {/* Bottom instruction + dots */}
-        <div className="mt-10 text-center">
-          <p className="text-xs text-white/25">
-            <span className="text-white/45 font-medium">Tap</span> a hex to highlight · tap again to expand
-          </p>
+      {/* Bottom instruction + dots */}
+      <div className="relative z-10 flex-shrink-0 text-center pb-8">
+        <p className="text-xs text-white/25">
+          <span className="text-white/45 font-medium">Tap</span> a hex to highlight · tap again to expand
+        </p>
 
-          <div className="flex items-center justify-center gap-2 mt-4">
-            {FOCUS_POINTS.map((fp, i) => (
-              <button
-                key={fp.id}
-                onClick={() => handleTap(i)}
-                className="w-2 h-2 rounded-full transition-all duration-300"
-                style={{
-                  background: i === activeIndex ? fp.color : "rgba(255,255,255,0.12)",
-                  boxShadow: i === activeIndex ? `0 0 8px ${fp.color}60` : "none",
-                  transform: i === activeIndex ? "scale(1.4)" : "scale(1)",
-                }}
-                aria-label={fp.label}
-              />
-            ))}
-          </div>
+        <div className="flex items-center justify-center gap-2 mt-3">
+          {FOCUS_POINTS.map((fp, i) => (
+            <button
+              key={fp.id}
+              onClick={() => handleTap(i)}
+              className="w-2 h-2 rounded-full transition-all duration-300"
+              style={{
+                background: i === activeIndex ? fp.color : "rgba(255,255,255,0.12)",
+                boxShadow: i === activeIndex ? `0 0 8px ${fp.color}60` : "none",
+                transform: i === activeIndex ? "scale(1.4)" : "scale(1)",
+              }}
+              aria-label={fp.label}
+            />
+          ))}
         </div>
       </div>
 
