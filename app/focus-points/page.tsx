@@ -7,6 +7,7 @@ import Link from "next/link";
 const FOCUS_POINTS = [
   {
     id: "energy",
+    number: 1,
     label: "Energy",
     color: "#F59E0B",
     glowColor: "rgba(245,158,11,0.30)",
@@ -43,6 +44,7 @@ const FOCUS_POINTS = [
   },
   {
     id: "water",
+    number: 2,
     label: "Water",
     color: "#06B6D4",
     glowColor: "rgba(6,182,212,0.30)",
@@ -75,6 +77,7 @@ const FOCUS_POINTS = [
   },
   {
     id: "air",
+    number: 3,
     label: "Air",
     color: "#7DD3FC",
     glowColor: "rgba(125,211,252,0.25)",
@@ -107,6 +110,7 @@ const FOCUS_POINTS = [
   },
   {
     id: "mobility",
+    number: 4,
     label: "Mobility",
     color: "#F97316",
     glowColor: "rgba(249,115,22,0.30)",
@@ -139,6 +143,7 @@ const FOCUS_POINTS = [
   },
   {
     id: "waste",
+    number: 5,
     label: "Waste",
     color: "#EF4444",
     glowColor: "rgba(239,68,68,0.25)",
@@ -171,6 +176,7 @@ const FOCUS_POINTS = [
   },
   {
     id: "green",
+    number: 6,
     label: "Green",
     color: "#22C55E",
     glowColor: "rgba(34,197,94,0.30)",
@@ -203,17 +209,19 @@ const FOCUS_POINTS = [
   },
 ];
 
-// ─── Hexagon SVG Component ─────────────────────────────────────────────────
+// ─── Hexagon SVG Component with Number Inside ───────────────────────────────
 function HexShape({
   size = 80,
   color,
   active,
   pulsing,
+  number,
 }: {
   size?: number;
   color: string;
   active: boolean;
   pulsing: boolean;
+  number: number;
 }) {
   const r = size / 2;
   const points = Array.from({ length: 6 }, (_, i) => {
@@ -237,15 +245,29 @@ function HexShape({
       {/* Main hex */}
       <polygon
         points={points}
-        fill={active ? `${color}18` : "rgba(255,255,255,0.03)"}
-        stroke={active ? color : "rgba(255,255,255,0.10)"}
-        strokeWidth={active ? 2 : 1}
+        fill={active ? `${color}15` : "rgba(255,255,255,0.02)"}
+        stroke={active ? color : "rgba(255,255,255,0.08)"}
+        strokeWidth={active ? 1.5 : 1}
         className="hex-main"
         style={{
-          filter: active ? `drop-shadow(0 0 12px ${color}60)` : "none",
+          filter: active ? `drop-shadow(0 0 16px ${color}50)` : "none",
           transition: "all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
         }}
       />
+      {/* Number inside hex */}
+      <text
+        x={r}
+        y={r}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fill={active ? color : "rgba(255,255,255,0.20)"}
+        fontSize={size * 0.32}
+        fontWeight="700"
+        fontFamily="Space Grotesk, sans-serif"
+        style={{ transition: "fill 0.4s ease" }}
+      >
+        {number}
+      </text>
     </svg>
   );
 }
@@ -262,9 +284,7 @@ function ExpandedCard({
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Trigger entrance animation
     requestAnimationFrame(() => setVisible(true));
-
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") handleClose();
     };
@@ -289,18 +309,17 @@ function ExpandedCard({
       onClick={handleOverlayClick}
       className="fixed inset-0 z-[100] flex items-center justify-center"
       style={{
-        background: "rgba(0,0,0,0.85)",
+        background: "rgba(0,0,0,0.88)",
         backdropFilter: "blur(32px) saturate(180%)",
         WebkitBackdropFilter: "blur(32px) saturate(180%)",
         opacity: visible ? 1 : 0,
         transition: "opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
       }}
     >
-      {/* Content container */}
       <div
         className="relative w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto rounded-3xl"
         style={{
-          background: "rgba(12,12,12,0.90)",
+          background: "rgba(12,12,12,0.92)",
           border: `1px solid ${fp.color}25`,
           boxShadow: `0 0 80px ${fp.glowColor.replace("0.30", "0.12")}, 0 24px 80px rgba(0,0,0,0.8)`,
           transform: visible ? "scale(1) translateY(0)" : "scale(0.92) translateY(40px)",
@@ -317,14 +336,20 @@ function ExpandedCard({
         <div className="sticky top-0 z-10 px-8 pt-8 pb-6" style={{ background: "rgba(12,12,12,0.95)", backdropFilter: "blur(16px)" }}>
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-5">
-              {/* Hex icon */}
-              <HexShape size={56} color={fp.color} active pulsing={false} />
+              <div
+                className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0"
+                style={{ background: `${fp.color}12`, border: `1px solid ${fp.color}25` }}
+              >
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={fp.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d={fp.iconPath} />
+                </svg>
+              </div>
               <div>
                 <span
                   className="text-[10px] font-mono tracking-[0.25em] uppercase block mb-1"
                   style={{ color: `${fp.color}60` }}
                 >
-                  Focus Point
+                  Focus Point {fp.number}
                 </span>
                 <h2
                   className="font-display text-3xl md:text-4xl font-bold tracking-tight"
@@ -335,7 +360,6 @@ function ExpandedCard({
               </div>
             </div>
 
-            {/* Close button */}
             <button
               onClick={handleClose}
               className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
@@ -352,12 +376,10 @@ function ExpandedCard({
             </button>
           </div>
 
-          {/* Subtitle hint */}
           <p className="mt-4 text-sm text-white/35 italic">
             Use your sketchbook to document observations for each question
           </p>
 
-          {/* Section divider */}
           <div className="mt-5 h-px" style={{ background: `linear-gradient(90deg, ${fp.color}30, transparent)` }} />
         </div>
 
@@ -365,7 +387,7 @@ function ExpandedCard({
         <div className="px-8 pb-10 pt-2">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {sectionKeys
-              .filter((sectionKey) => fp.questions[sectionKey as keyof typeof fp.questions] !== undefined)
+              .filter((sk) => fp.questions[sk as keyof typeof fp.questions] !== undefined)
               .map((sectionKey, si) => {
                 const questions = fp.questions[sectionKey as keyof typeof fp.questions]!;
                 return (
@@ -380,12 +402,8 @@ function ExpandedCard({
                     transition: `all 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${si * 80 + 200}ms`,
                   }}
                 >
-                  {/* Section label */}
                   <div className="flex items-center gap-3 mb-3">
-                    <div
-                      className="w-2 h-2 rounded-full"
-                      style={{ background: fp.color }}
-                    />
+                    <div className="w-2 h-2 rounded-full" style={{ background: fp.color }} />
                     <span
                       className="text-xs font-mono font-semibold tracking-wide uppercase"
                       style={{ color: fp.color }}
@@ -394,7 +412,6 @@ function ExpandedCard({
                     </span>
                   </div>
 
-                  {/* Questions list */}
                   <ul className="space-y-2.5">
                     {questions.map((q, qi) => (
                       <li
@@ -406,12 +423,9 @@ function ExpandedCard({
                           transition: `all 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${si * 80 + qi * 50 + 350}ms`,
                         }}
                       >
-                        {/* Bullet */}
                         <span
                           className="absolute left-0 top-1.5 w-1.5 h-1.5 rounded-full"
-                          style={{
-                            background: `${fp.color}50`,
-                          }}
+                          style={{ background: `${fp.color}50` }}
                         />
                         {q}
                       </li>
@@ -422,7 +436,6 @@ function ExpandedCard({
             })}
           </div>
 
-          {/* Bottom CTA */}
           <div
             className="mt-8 p-5 rounded-2xl text-center"
             style={{
@@ -451,7 +464,6 @@ export default function FocusPointsPage() {
 
   const activeFp = FOCUS_POINTS[activeIndex];
 
-  // Auto-cycle every 4 seconds
   const startAutoCycle = useCallback(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     intervalRef.current = setInterval(() => {
@@ -468,19 +480,23 @@ export default function FocusPointsPage() {
     };
   }, [startAutoCycle]);
 
-  const handleSelect = (index: number) => {
+  // Tap to highlight, if already highlighted → expand
+  const handleTap = (index: number) => {
     userInteractedRef.current = true;
-    setActiveIndex(index);
-    // Resume auto-cycle after 12s of inactivity
-    setTimeout(() => {
-      userInteractedRef.current = false;
-      startAutoCycle();
-    }, 12000);
-  };
 
-  const handleExpand = (id: string) => {
-    setExpandedId(id);
-    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (index === activeIndex) {
+      // Already highlighted → expand
+      setExpandedId(FOCUS_POINTS[index].id);
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    } else {
+      // Not highlighted → highlight it
+      setActiveIndex(index);
+      // Resume auto-cycle after 12s of inactivity
+      setTimeout(() => {
+        userInteractedRef.current = false;
+        startAutoCycle();
+      }, 12000);
+    }
   };
 
   const handleCollapse = () => {
@@ -488,10 +504,10 @@ export default function FocusPointsPage() {
     startAutoCycle();
   };
 
-  // Circular positions for 6 items
+  // Circular positions: index 0 at top (-90°), clockwise
   const hexPositions = FOCUS_POINTS.map((_, i) => {
     const angle = (Math.PI / 3) * i - Math.PI / 2;
-    const radius = 160;
+    const radius = 155;
     return {
       x: Math.cos(angle) * radius,
       y: Math.sin(angle) * radius,
@@ -549,32 +565,41 @@ export default function FocusPointsPage() {
       {/* Main Interactive Area */}
       <div className="relative z-10 flex flex-col items-center justify-center" style={{ minHeight: "calc(100vh - 120px)" }}>
         {/* Hexagon Ring */}
-        <div className="relative" style={{ width: 420, height: 420 }}>
+        <div className="relative" style={{ width: 400, height: 400 }}>
           {/* Center info */}
           <div
             className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none"
             style={{ zIndex: 5 }}
           >
+            {/* Center glow circle */}
             <div
-              className="w-20 h-20 mx-auto mb-3 rounded-full flex items-center justify-center"
+              className="w-20 h-20 mx-auto mb-3 rounded-full flex items-center justify-center relative"
               style={{
-                background: `${activeFp.color}10`,
-                border: `1px solid ${activeFp.color}30`,
-                boxShadow: `0 0 40px ${activeFp.glowColor}`,
+                background: `${activeFp.color}08`,
+                border: `1px solid ${activeFp.color}20`,
+                boxShadow: `0 0 40px ${activeFp.glowColor.replace("0.30", "0.15")}`,
                 transition: "all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
               }}
             >
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={activeFp.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              {/* Center icon */}
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke={activeFp.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: "stroke 0.4s ease" }}>
                 <path d={activeFp.iconPath} />
               </svg>
+
+              {/* Subtle orbit ring */}
+              <div
+                className="absolute inset-[-8px] rounded-full border border-white/[0.04]"
+                style={{ animation: "spin 20s linear infinite" }}
+              />
             </div>
+
             <span
               className="text-2xl font-display font-bold block transition-colors duration-400"
               style={{ color: activeFp.color }}
             >
               {activeFp.label.toUpperCase()}
             </span>
-            <span className="text-[10px] font-mono tracking-widest text-white/25 mt-1 block">
+            <span className="text-[10px] font-mono tracking-widest text-white/20 mt-1 block">
               TAP TO EXPLORE
             </span>
           </div>
@@ -584,11 +609,11 @@ export default function FocusPointsPage() {
             {hexPositions.map((pos, i) => (
               <line
                 key={i}
-                x1="210"
-                y1="210"
-                x2={210 + pos.x}
-                y2={210 + pos.y}
-                stroke={i === activeIndex ? activeFp.color : "rgba(255,255,255,0.06)"}
+                x1="200"
+                y1="200"
+                x2={200 + pos.x}
+                y2={200 + pos.y}
+                stroke={i === activeIndex ? activeFp.color : "rgba(255,255,255,0.05)"}
                 strokeWidth={i === activeIndex ? 1.5 : 1}
                 strokeDasharray={i === activeIndex ? "none" : "4 4"}
                 style={{ transition: "all 0.5s ease" }}
@@ -603,15 +628,14 @@ export default function FocusPointsPage() {
             return (
               <button
                 key={fp.id}
-                onClick={() => handleSelect(i)}
-                onDoubleClick={() => handleExpand(fp.id)}
+                onClick={() => handleTap(i)}
                 className="absolute flex flex-col items-center gap-2 group"
                 style={{
-                  left: 210 + pos.x - 40,
-                  top: 210 + pos.y - 40,
+                  left: 200 + pos.x - 40,
+                  top: 200 + pos.y - 40,
                   width: 80,
                   zIndex: isActive ? 10 : 2,
-                  transform: isActive ? "scale(1.12)" : "scale(1)",
+                  transform: isActive ? "scale(1.10)" : "scale(1)",
                   transition: "transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
                 }}
               >
@@ -620,41 +644,33 @@ export default function FocusPointsPage() {
                   color={fp.color}
                   active={isActive}
                   pulsing={isActive}
+                  number={fp.number}
                 />
                 <span
                   className="text-[10px] font-semibold tracking-wider uppercase transition-colors duration-300"
-                  style={{ color: isActive ? fp.color : "rgba(255,255,255,0.35)" }}
+                  style={{ color: isActive ? fp.color : "rgba(255,255,255,0.30)" }}
                 >
                   {fp.label}
-                </span>
-
-                {/* Expand hint on hover */}
-                <span
-                  className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[9px] text-white/20 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none"
-                >
-                  dbl-click to expand
                 </span>
               </button>
             );
           })}
         </div>
 
-        {/* Bottom legend / instruction */}
-        <div className="mt-12 text-center">
+        {/* Bottom instruction + dots */}
+        <div className="mt-10 text-center">
           <p className="text-xs text-white/25">
-            <span className="text-white/45 font-medium">Click</span> a hex to highlight ·{" "}
-            <span className="text-white/45 font-medium">Double-click</span> to expand questions
+            <span className="text-white/45 font-medium">Tap</span> a hex to highlight · tap again to expand
           </p>
 
-          {/* Active indicator dots */}
           <div className="flex items-center justify-center gap-2 mt-4">
             {FOCUS_POINTS.map((fp, i) => (
               <button
                 key={fp.id}
-                onClick={() => handleSelect(i)}
+                onClick={() => handleTap(i)}
                 className="w-2 h-2 rounded-full transition-all duration-300"
                 style={{
-                  background: i === activeIndex ? fp.color : "rgba(255,255,255,0.15)",
+                  background: i === activeIndex ? fp.color : "rgba(255,255,255,0.12)",
                   boxShadow: i === activeIndex ? `0 0 8px ${fp.color}60` : "none",
                   transform: i === activeIndex ? "scale(1.4)" : "scale(1)",
                 }}
