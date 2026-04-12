@@ -504,13 +504,14 @@ export default function FocusPointsPage() {
     startAutoCycle();
   };
 
+  const RADIUS = 170;
+
   // Circular positions: index 0 at top (-90°), clockwise
   const hexPositions = FOCUS_POINTS.map((_, i) => {
     const angle = (Math.PI / 3) * i - Math.PI / 2;
-    const radius = 170;
     return {
-      x: Math.cos(angle) * radius,
-      y: Math.sin(angle) * radius,
+      x: Math.cos(angle) * RADIUS,
+      y: Math.sin(angle) * RADIUS,
     };
   });
 
@@ -617,10 +618,10 @@ export default function FocusPointsPage() {
           {/* Connecting lines from center to hex edge */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
             {hexPositions.map((pos, i) => {
-              // Stop line at hex edge: distance from center to hex edge = radius - halfHex
-              const lineLen = radius - HALF_HEX;
-              const endX = CENTER + pos.x * (lineLen / radius);
-              const endY = CENTER + pos.y * (lineLen / radius);
+              // Stop line at hex edge
+              const lineLen = RADIUS - HALF_HEX;
+              const endX = CENTER + pos.x * (lineLen / RADIUS);
+              const endY = CENTER + pos.y * (lineLen / RADIUS);
               return (
                 <line
                   key={i}
