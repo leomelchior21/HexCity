@@ -470,7 +470,7 @@ export default function FocusPointsPage() {
       if (!userInteractedRef.current) {
         setActiveIndex((prev) => (prev + 1) % FOCUS_POINTS.length);
       }
-    }, 4000);
+    }, 1000);
   }, []);
 
   useEffect(() => {
