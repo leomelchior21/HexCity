@@ -31,10 +31,6 @@ const VEG_PRESETS: {
   { key: "optimal", label: "Optimal", icon: "🌳", range: [0.45, 0.50] },
 ];
 
-const TIME_LABELS = [
-  "00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00", "24:00",
-];
-
 export default function SimulationPage() {
   const [vegPreset, setVegPreset] = useState("metro");
   const [vegRatio, setVegRatio] = useState(0.15);
@@ -43,7 +39,6 @@ export default function SimulationPage() {
   });
   const [zoom, setZoom] = useState(1);
   const [paused, setPaused] = useState(false);
-  const [dayNight, setDayNight] = useState(0.5);
   const [speed, setSpeed] = useState(1);
   const [stats, setStats] = useState({ congestion: 0, avgSpeed: 0, efficiency: 0, total: 0 });
   const [selectedEntity, setSelectedEntity] = useState<{
@@ -153,7 +148,7 @@ export default function SimulationPage() {
                     vegRatio={vegRatio}
                     targets={targets}
                     paused={paused}
-                    dayNight={dayNight}
+                    dayNight={0.5}
                     showHeatmap={false}
                     speed={speed}
                     onStatsChange={handleStats}
@@ -364,23 +359,6 @@ export default function SimulationPage() {
                       </button>
                     ))}
                   </div>
-                </ControlCard>
-
-                {/* Time of day */}
-                <ControlCard label="Time of Day">
-                  <div className="flex justify-between text-[9px] text-white/20 font-mono mb-1.5">
-                    <span>🌙</span>
-                    <span style={{ color: dayNight < 0.3 || dayNight > 0.7 ? "#818CF8" : "#FCD34D" }}>
-                      {TIME_LABELS[Math.round(dayNight * 8)]}
-                    </span>
-                    <span>☀️</span>
-                  </div>
-                  <input
-                    type="range" min={0} max={100} step={1}
-                    value={dayNight * 100}
-                    onChange={e => setDayNight(+e.target.value / 100)}
-                    className="w-full"
-                  />
                 </ControlCard>
 
                 {/* Traffic */}
