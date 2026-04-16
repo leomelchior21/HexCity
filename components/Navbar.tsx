@@ -7,8 +7,8 @@ import { usePathname } from "next/navigation";
 const links = [
   { href: "/",               label: "Home"         },
   { href: "/focus-points",   label: "Focus Points" },
-  { href: "/swot",           label: "SWOT"          },
   { href: "/ideation",       label: "Ideation"      },
+  { href: "/swot",           label: "SWOT"          },
   { href: "/lab",            label: "Ardudeck"     },
   { href: "/simulation",     label: "City Sim"     },
 ];

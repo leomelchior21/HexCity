@@ -395,10 +395,8 @@ export default function IdeationPage() {
           <div
             className="grid gap-3 flex-1 min-h-0"
             style={{
-              gridTemplateColumns:
-                groupCount === 3 ? "repeat(3, minmax(0, 1fr))" : "repeat(2, minmax(0, 1fr))",
-              gridTemplateRows:
-                groupCount === 3 ? "minmax(0, 1fr)" : "repeat(2, minmax(0, 1fr))",
+              gridTemplateColumns: `repeat(${groupCount}, minmax(0, 1fr))`,
+              gridTemplateRows: "minmax(0, 1fr)",
             }}
           >
             {briefs.map((brief, index) => (
@@ -509,7 +507,7 @@ function GroupCard({
 
   return (
     <article
-      className="relative overflow-hidden rounded-lg p-4 transition-all duration-300 hover:-translate-y-1 h-full min-h-0 flex flex-col"
+      className="relative overflow-hidden rounded-lg p-3 transition-all duration-300 hover:-translate-y-1 h-full min-h-0 flex flex-col"
       style={{
         background: `linear-gradient(135deg, ${accent}12 0%, rgba(8,8,10,0.88) 46%, rgba(0,0,0,0.96) 100%)`,
         border: `1px solid ${accent}28`,
@@ -523,19 +521,19 @@ function GroupCard({
         }}
       />
 
-      <div className="flex items-start justify-between gap-3 mb-3">
+      <div className="flex items-start justify-between gap-2 mb-2">
         <div>
           <p className="text-[10px] text-white/25 font-mono uppercase mb-1">
             Brief {String(groupNumber).padStart(2, "0")}
           </p>
-          <h2 className="font-display text-xl md:text-2xl font-bold" style={{ color: accent }}>
+          <h2 className="font-display text-lg md:text-xl font-bold" style={{ color: accent }}>
             Group {groupNumber}
           </h2>
         </div>
         <HexBadge color={domainColor} />
       </div>
 
-      <div className="grid grid-rows-[1.15fr_0.85fr] gap-3 flex-1 min-h-0">
+      <div className="grid grid-rows-[1.05fr_0.95fr] gap-2 flex-1 min-h-0">
         <BriefField label="Problem" color={domainColor}>
           <div key={`problem-${version.problem}-${groupNumber}`} className="fade-in-up">
             {brief.problem ? (
@@ -546,21 +544,21 @@ function GroupCard({
                 >
                   {brief.problem.domain.label}
                 </p>
-                <p className="text-white/72 text-base md:text-lg leading-snug">{brief.problem.text}</p>
+                <p className="text-white/72 text-sm md:text-base leading-snug">{brief.problem.text}</p>
               </>
             ) : (
-              <p className="text-white/25 text-base md:text-lg leading-snug">
+              <p className="text-white/25 text-sm md:text-base leading-snug">
                 Generate a city problem.
               </p>
             )}
           </div>
         </BriefField>
 
-        <div className="grid grid-cols-2 gap-3 min-h-0">
+        <div className="grid grid-cols-1 gap-2 min-h-0">
           <BriefField label="Sensor" color="#06B6D4">
             <p
               key={`sensor-${version.sensor}-${groupNumber}`}
-              className="fade-in-up text-cyan-200 text-base md:text-lg font-semibold leading-snug"
+              className="fade-in-up text-cyan-200 text-sm md:text-base font-semibold leading-snug"
             >
               {brief.sensor ?? "Select input"}
             </p>
@@ -573,16 +571,16 @@ function GroupCard({
                   {brief.actuators.map((actuator, index) => (
                     <div key={actuator}>
                       {index > 0 && (
-                        <p className="text-white/25 text-[10px] font-mono uppercase mb-0.5">plus</p>
+                        <p className="text-white/25 text-[9px] font-mono uppercase mb-0.5">plus</p>
                       )}
-                      <p className="text-green-200 text-base md:text-lg font-semibold leading-snug">
+                      <p className="text-green-200 text-sm md:text-base font-semibold leading-snug">
                         {actuator}
                       </p>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-white/25 text-base md:text-lg leading-snug">Select outputs</p>
+                <p className="text-white/25 text-sm md:text-base leading-snug">Select outputs</p>
               )}
             </div>
           </BriefField>
@@ -603,12 +601,12 @@ function BriefField({
 }) {
   return (
     <section
-      className="border-t pt-3 min-h-0 overflow-hidden"
+      className="border-t pt-2 min-h-0 overflow-hidden"
       style={{
         borderColor: "rgba(255,255,255,0.07)",
       }}
     >
-      <div className="flex items-center gap-2 mb-2">
+      <div className="flex items-center gap-2 mb-1.5">
         <span
           className="h-2 w-2 rounded-full"
           style={{
@@ -630,7 +628,7 @@ function HexBadge({ color }: { color: string }) {
   }).join(" ");
 
   return (
-    <svg width="44" height="44" viewBox="0 0 56 56" aria-hidden="true" className="flex-shrink-0">
+    <svg width="38" height="38" viewBox="0 0 56 56" aria-hidden="true" className="flex-shrink-0">
       <polygon
         points={points}
         fill={`${color}18`}
