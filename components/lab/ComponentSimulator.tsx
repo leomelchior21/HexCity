@@ -11,8 +11,37 @@ export default function ComponentSimulator({ comp }: { comp: ComponentDef }) {
   const [val3, setVal3] = useState(50);
   const [on, setOn] = useState(false);
   const [pressed, setPressed] = useState(false);
+  const [channels, setChannels] = useState([false, false, false, false]);
   const buzzerRef = useRef<OscillatorNode | null>(null);
   const audioRef = useRef<AudioContext | null>(null);
+
+  useEffect(() => {
+    if (sim === "buzzer") return;
+
+    if (buzzerRef.current) {
+      buzzerRef.current.stop();
+      buzzerRef.current = null;
+    }
+
+    if (audioRef.current) {
+      audioRef.current.close();
+      audioRef.current = null;
+    }
+  }, [sim]);
+
+  useEffect(() => {
+    return () => {
+      if (buzzerRef.current) {
+        buzzerRef.current.stop();
+        buzzerRef.current = null;
+      }
+
+      if (audioRef.current) {
+        audioRef.current.close();
+        audioRef.current = null;
+      }
+    };
+  }, []);
 
   // LED on/off
   if (sim === "led") {
@@ -191,8 +220,6 @@ export default function ComponentSimulator({ comp }: { comp: ComponentDef }) {
       { name: "Lamp", icon: "💡", channel: 2, color: "#F59E0B" },
       { name: "Heater", icon: "🔥", channel: 3, color: "#EF4444" },
     ];
-    const [channels, setChannels] = useState([false, false, false, false]);
-
     const toggle = (ch: number) => {
       setChannels(prev => prev.map((v, i) => i === ch ? !v : v));
     };
