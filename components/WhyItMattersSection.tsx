@@ -102,6 +102,7 @@ export default function WhyItMattersSection() {
           <p className="text-white/50 mb-8">Access the Ardudeck or open the city simulation.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <CTAButton href="/swot" label="SWOT Analysis" />
+            <CTAButton href="/ideation" label="Ideation" />
             <CTAButton href="/lab" label="Ardudeck" />
             <CTAButton href="/simulation" label="City Sim" />
           </div>
