@@ -28,9 +28,7 @@ type VersionState = {
 };
 
 const GROUP_OPTIONS = [3, 4] as const;
-const ACTUATOR_COUNT_OPTIONS = [1, 2, 3] as const;
 const DEFAULT_GROUP_COUNT = 4;
-const DEFAULT_ACTUATOR_COUNT = 2;
 
 const GROUP_COLORS = [
   "#EF4444",
@@ -199,23 +197,8 @@ function pickSensors(count: number) {
   return shuffle(SENSORS).slice(0, count);
 }
 
-function createActuatorSets(count: number, actuatorCount: number) {
-  const sets: string[][] = [];
-
-  const collect = (start: number, current: string[]) => {
-    if (current.length === actuatorCount) {
-      sets.push(current);
-      return;
-    }
-
-    for (let i = start; i < ACTUATORS.length; i += 1) {
-      collect(i + 1, [...current, ACTUATORS[i]]);
-    }
-  };
-
-  collect(0, []);
-
-  return shuffle(sets).slice(0, count);
+function pickActuators(count: number) {
+  return shuffle(ACTUATORS).slice(0, count).map((actuator) => [actuator]);
 }
 
 function resizeBriefs(current: GroupBrief[], count: number) {
@@ -274,7 +257,6 @@ function nextVersion(current: VersionState, keys: Array<keyof VersionState>) {
 
 export default function IdeationPage() {
   const [groupCount, setGroupCount] = useState(DEFAULT_GROUP_COUNT);
-  const [actuatorCount, setActuatorCount] = useState(DEFAULT_ACTUATOR_COUNT);
   const [briefs, setBriefs] = useState<GroupBrief[]>(() => createEmptyBriefs(DEFAULT_GROUP_COUNT));
   const [version, setVersion] = useState<VersionState>({
     problem: 0,
@@ -285,17 +267,6 @@ export default function IdeationPage() {
   const selectGroupCount = (count: number) => {
     setGroupCount(count);
     setBriefs((current) => resizeBriefs(current, count));
-  };
-
-  const selectActuatorCount = (count: number) => {
-    setActuatorCount(count);
-    setBriefs((current) =>
-      current.map((brief) => ({
-        ...brief,
-        actuators: brief.actuators ? null : brief.actuators,
-      }))
-    );
-    setVersion((current) => nextVersion(current, ["actuator"]));
   };
 
   const randomizeProblems = () => {
@@ -311,7 +282,7 @@ export default function IdeationPage() {
   };
 
   const randomizeActuators = () => {
-    const actuatorSets = createActuatorSets(groupCount, actuatorCount);
+    const actuatorSets = pickActuators(groupCount);
     setBriefs((current) => updateIndexedBriefs(current, actuatorSets, "actuators"));
     setVersion((current) => nextVersion(current, ["actuator"]));
   };
@@ -319,7 +290,7 @@ export default function IdeationPage() {
   const randomizeAll = () => {
     const problems = pickProblems(groupCount);
     const sensors = pickSensors(groupCount);
-    const actuatorSets = createActuatorSets(groupCount, actuatorCount);
+    const actuatorSets = pickActuators(groupCount);
 
     setBriefs((current) =>
       current.map((brief, index) => ({
@@ -384,20 +355,6 @@ export default function IdeationPage() {
                   ))}
               </ControlGroup>
 
-              <ControlGroup label="Actuators per group">
-                  {ACTUATOR_COUNT_OPTIONS.map((count) => (
-                    <button
-                      key={count}
-                      type="button"
-                      onClick={() => selectActuatorCount(count)}
-                      className="rounded-lg px-2.5 py-2 text-[11px] font-semibold transition-all duration-200"
-                      style={buttonStyle(actuatorCount === count, "#22C55E")}
-                    >
-                      {formatOptionLabel(count, "actuator")}
-                    </button>
-                  ))}
-              </ControlGroup>
-
               <div className="grid grid-cols-5 gap-2 flex-1 min-w-0">
                 <ControlButton tone="primary" onClick={randomizeAll}>
                   Generate All
@@ -409,7 +366,7 @@ export default function IdeationPage() {
                   New Sensors
                 </ControlButton>
                 <ControlButton tone="actuator" onClick={randomizeActuators}>
-                  New Actuators
+                  New Actuator
                 </ControlButton>
                 <ControlButton tone="danger" onClick={clearAll}>
                   Clear
@@ -590,23 +547,16 @@ function GroupCard({
             </p>
           </BriefField>
 
-          <BriefField label="Actuators" color="#22C55E">
+          <BriefField label="Actuator" color="#22C55E">
             <div key={`actuator-${version.actuator}-${groupNumber}`} className="fade-in-up">
               {brief.actuators ? (
                 <div className="space-y-1">
-                  {brief.actuators.map((actuator, index) => (
-                    <div key={actuator}>
-                      {index > 0 && (
-                        <p className="text-white/25 text-[9px] font-mono uppercase mb-0.5">plus</p>
-                      )}
-                      <p className="text-green-200 text-sm md:text-base font-semibold leading-snug">
-                        {actuator}
-                      </p>
-                    </div>
-                  ))}
+                  <p className="text-green-200 text-sm md:text-base font-semibold leading-snug">
+                    {brief.actuators[0]}
+                  </p>
                 </div>
               ) : (
-                <p className="text-white/25 text-sm md:text-base leading-snug">Select outputs</p>
+                <p className="text-white/25 text-sm md:text-base leading-snug">Select output</p>
               )}
             </div>
           </BriefField>
