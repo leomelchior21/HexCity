@@ -513,7 +513,7 @@ function GroupCard({
             Group {groupNumber}
           </h2>
         </div>
-        <HexBadge color={domainColor} />
+        <HexBadge color={accent} />
       </div>
 
       <div className="grid grid-rows-[1.05fr_0.95fr] gap-2 flex-1 min-h-0">
