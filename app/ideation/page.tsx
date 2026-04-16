@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
 
 type ProblemDomain = {
@@ -211,10 +211,6 @@ function updateIndexedBriefs<T>(
   }));
 }
 
-function hasGeneratedBrief(brief: GroupBrief) {
-  return Boolean(brief.problem && brief.sensor && brief.actuators);
-}
-
 function formatOptionLabel(value: number, noun: string) {
   if (value === 1) return `1 ${noun}`;
   return `${value} ${noun}s`;
@@ -257,11 +253,6 @@ export default function IdeationPage() {
     sensor: 0,
     actuator: 0,
   });
-
-  const generatedCount = useMemo(
-    () => briefs.filter(hasGeneratedBrief).length,
-    [briefs]
-  );
 
   const selectGroupCount = (count: number) => {
     setGroupCount(count);
@@ -351,23 +342,6 @@ export default function IdeationPage() {
             }}
           >
             <div className="flex flex-col gap-2">
-              <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:justify-between">
-                <div>
-                  <p className="text-[10px] font-mono uppercase text-white/25 mb-1">
-                    Ideation Sprint
-                  </p>
-                  <h1 className="font-display text-xl md:text-2xl font-bold leading-none">
-                    City Brief <span className="gradient-text">Randomizer</span>
-                  </h1>
-                </div>
-
-                <div className="grid grid-cols-3 gap-2 text-center">
-                  <Metric value={String(groupCount)} label="groups" />
-                  <Metric value={String(actuatorCount)} label="actuators" />
-                  <Metric value={`${generatedCount}/${groupCount}`} label="ready" />
-                </div>
-              </div>
-
               <div className="grid lg:grid-cols-[1fr_1.45fr] gap-2">
                 <OptionGroup label="Groups">
                   {GROUP_OPTIONS.map((count) => (
@@ -439,17 +413,7 @@ export default function IdeationPage() {
           </div>
         </div>
       </section>
-
     </main>
-  );
-}
-
-function Metric({ value, label }: { value: string; label: string }) {
-  return (
-    <div>
-      <div className="font-display text-lg md:text-xl font-bold gradient-text">{value}</div>
-      <div className="text-[10px] text-white/25 font-mono uppercase">{label}</div>
-    </div>
   );
 }
 
