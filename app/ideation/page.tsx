@@ -51,6 +51,11 @@ const PROBLEM_DOMAINS: ProblemDomain[] = [
       "Peak-hour power overload in dense neighborhoods",
       "EV chargers are hard to monitor or prioritize",
       "Classrooms waste light and cooling when empty",
+      "Air conditioning runs while windows or doors stay open",
+      "Shared rooms lack feedback about real-time energy use",
+      "Backup batteries are not checked before outages",
+      "Outdoor equipment consumes power when no one is nearby",
+      "Renewable energy is stored poorly during low-demand hours",
     ],
   },
   {
@@ -64,6 +69,11 @@ const PROBLEM_DOMAINS: ProblemDomain[] = [
       "Turbid reservoir water is detected too late",
       "Park irrigation wastes water after rain",
       "Flood risk rises in low-lying streets",
+      "Public fountains keep running when usage is low",
+      "Drainage grates become blocked before storms",
+      "Water quality changes after construction nearby",
+      "School gardens receive the same water in every season",
+      "People cannot tell when stored rainwater is safe to use",
     ],
   },
   {
@@ -77,6 +87,11 @@ const PROBLEM_DOMAINS: ProblemDomain[] = [
       "Noise and air pollution overlap near avenues",
       "Industrial areas lack simple local warning systems",
       "People cannot see air quality changes in real time",
+      "Crowded rooms build up humidity and stale air",
+      "Dust increases around construction and unpaved areas",
+      "Green areas are not placed where air feels worst",
+      "Smoke or odor events spread before anyone can respond",
+      "Students cannot compare indoor and outdoor comfort",
     ],
   },
   {
@@ -90,6 +105,11 @@ const PROBLEM_DOMAINS: ProblemDomain[] = [
       "Emergency vehicles lose time in congested streets",
       "Parking availability is invisible until drivers arrive",
       "Transit hubs have weak first and last-mile connections",
+      "Drop-off zones become chaotic during short time windows",
+      "Drivers do not notice pedestrians waiting to cross",
+      "Shared paths become crowded without direction signals",
+      "Service vehicles block narrow streets at peak hours",
+      "People with reduced mobility lack clear route feedback",
     ],
   },
   {
@@ -103,6 +123,11 @@ const PROBLEM_DOMAINS: ProblemDomain[] = [
       "E-waste collection points are hard to locate",
       "Organic waste is not routed to composting",
       "Hazardous waste needs clearer alerts and isolation",
+      "Bins are collected even when they are almost empty",
+      "Wet and dry waste mix before sorting can happen",
+      "Compost areas become too dry or too humid",
+      "Public spaces lack feedback when litter increases",
+      "Collection teams do not know which bins need priority",
     ],
   },
   {
@@ -116,17 +141,20 @@ const PROBLEM_DOMAINS: ProblemDomain[] = [
       "Heat islands grow where vegetation is scarce",
       "Community gardens lack simple irrigation feedback",
       "Biodiversity areas are not protected from foot traffic",
+      "Young trees are not monitored during hot weeks",
+      "Plant beds flood because drainage is not visible",
+      "Green spaces lack signs of soil health changes",
+      "Pollinator gardens are placed without activity data",
+      "People do not see how shade changes comfort levels",
     ],
   },
 ];
 
 const SENSORS = [
-  "Push Button",
-  "Potentiometer",
   "LDR Light Sensor",
-  "Ultrasonic HC-SR04",
-  "DHT11 Temperature",
-  "DHT11 Humidity",
+  "Ultrasonic Distance Sensor",
+  "Temperature Sensor",
+  "Humidity Sensor",
   "Water Turbidity Sensor",
   "Water Level Sensor",
   "Rain Sensor",
@@ -137,7 +165,7 @@ const ACTUATORS = [
   "LED",
   "RGB LED",
   "Servo Motor 180",
-  "Servo Motor 360",
+  "Stepper Motor",
   "Buzzer",
   "Relay",
 ];
@@ -341,38 +369,36 @@ export default function IdeationPage() {
               boxShadow: "0 12px 36px rgba(0,0,0,0.45)",
             }}
           >
-            <div className="flex flex-col gap-2">
-              <div className="grid lg:grid-cols-[1fr_1.45fr] gap-2">
-                <OptionGroup label="Groups">
+            <div className="flex flex-nowrap items-end gap-2 overflow-hidden">
+              <ControlGroup label="Groups">
                   {GROUP_OPTIONS.map((count) => (
                     <button
                       key={count}
                       type="button"
                       onClick={() => selectGroupCount(count)}
-                      className="rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-200"
+                      className="rounded-lg px-2.5 py-2 text-[11px] font-semibold transition-all duration-200"
                       style={buttonStyle(groupCount === count, "#A78BFA")}
                     >
                       {formatOptionLabel(count, "group")}
                     </button>
                   ))}
-                </OptionGroup>
+              </ControlGroup>
 
-                <OptionGroup label="Actuators per group">
+              <ControlGroup label="Actuators per group">
                   {ACTUATOR_COUNT_OPTIONS.map((count) => (
                     <button
                       key={count}
                       type="button"
                       onClick={() => selectActuatorCount(count)}
-                      className="rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-200"
+                      className="rounded-lg px-2.5 py-2 text-[11px] font-semibold transition-all duration-200"
                       style={buttonStyle(actuatorCount === count, "#22C55E")}
                     >
                       {formatOptionLabel(count, "actuator")}
                     </button>
                   ))}
-                </OptionGroup>
-              </div>
+              </ControlGroup>
 
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+              <div className="grid grid-cols-5 gap-2 flex-1 min-w-0">
                 <ControlButton tone="primary" onClick={randomizeAll}>
                   Generate All
                 </ControlButton>
@@ -415,7 +441,7 @@ export default function IdeationPage() {
   );
 }
 
-function OptionGroup({
+function ControlGroup({
   label,
   children,
 }: {
@@ -424,7 +450,7 @@ function OptionGroup({
 }) {
   return (
     <div
-      className="rounded-lg p-2"
+      className="rounded-lg p-2 flex-shrink-0"
       style={{
         background: "rgba(255,255,255,0.025)",
         border: "1px solid rgba(255,255,255,0.06)",
@@ -433,7 +459,7 @@ function OptionGroup({
       <p className="text-[10px] text-white/25 font-mono uppercase mb-2 px-1">
         {label}
       </p>
-      <div className="flex flex-wrap gap-2">{children}</div>
+      <div className="flex flex-nowrap gap-2">{children}</div>
     </div>
   );
 }
@@ -479,7 +505,7 @@ function ControlButton({
     <button
       type="button"
       onClick={onClick}
-      className="rounded-lg px-3 py-2.5 text-xs md:text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
+      className="rounded-lg px-2.5 py-2.5 text-[11px] md:text-xs font-semibold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
       style={{
         ...toneStyles,
         borderWidth: 1,
