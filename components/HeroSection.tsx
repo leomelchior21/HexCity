@@ -1,17 +1,9 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import HexBackground from "./HexBackground";
-
-const TIMELINE = [
-  { m: "FEB", label: "Basics",      status: "done"     },
-  { m: "MAR", label: "Advanced",    status: "done"     },
-  { m: "APR", label: "Ideation",    status: "current"  },
-  { m: "MAY", label: "Prototyping", status: "upcoming" },
-  { m: "JUN", label: "Testing",     status: "upcoming" },
-  { m: "JUL", label: "Break",       status: "vacation" },
-  { m: "AUG", label: "Finale",      status: "upcoming" },
-];
 
 export default function HeroSection() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -129,32 +121,42 @@ export default function HeroSection() {
           />
         </div>
 
-        {/* Liquid Glass Timeline */}
-        <div className="mt-12 timeline-reveal" style={{ animationDelay: "0.9s" }}>
-          <div
-            className="relative rounded-2xl px-6 py-5"
+        <motion.div
+          className="mt-12 timeline-reveal"
+          style={{ animationDelay: "0.9s" }}
+          initial={{ opacity: 0, y: 18, scale: 0.96 }}
+          animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : 18, scale: loaded ? 1 : 0.96 }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+        >
+          <Link
+            href="/projects"
+            className="group relative inline-flex min-h-[78px] items-center justify-center overflow-hidden rounded-2xl px-9 sm:px-12 text-base sm:text-lg font-bold uppercase tracking-[0.18em] text-white transition-transform duration-300 hover:-translate-y-1 active:translate-y-0"
             style={{
-              background: "rgba(255, 255, 255, 0.05)",
-              backdropFilter: "blur(28px) saturate(180%)",
-              WebkitBackdropFilter: "blur(28px) saturate(180%)",
-              border: "1px solid rgba(255, 255, 255, 0.09)",
+              background:
+                "linear-gradient(135deg, rgba(124,58,237,0.92), rgba(6,182,212,0.82) 52%, rgba(34,197,94,0.78))",
+              border: "1px solid rgba(255,255,255,0.22)",
               boxShadow:
-                "0 1px 0 0 rgba(255,255,255,0.10) inset, 0 -1px 0 0 rgba(0,0,0,0.5) inset, 0 16px 48px rgba(0,0,0,0.7), 0 4px 16px rgba(0,0,0,0.5)",
+                "0 1px 0 rgba(255,255,255,0.28) inset, 0 -1px 0 rgba(0,0,0,0.28) inset, 0 18px 55px rgba(6,182,212,0.18), 0 18px 65px rgba(124,58,237,0.22)",
             }}
           >
-            {/* Top specular highlight */}
-            <div
-              className="absolute top-0 left-4 right-4 h-px rounded-full"
-              style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)" }}
+            <span
+              className="absolute inset-y-0 -left-1/2 w-1/2 skew-x-[-18deg] bg-white/20 transition-transform duration-700 group-hover:translate-x-[360%]"
+              aria-hidden
             />
-
-            <div className="flex items-start gap-0">
-              {TIMELINE.map((item, i) => (
-                <TimelineItem key={item.m} item={item} index={i} total={TIMELINE.length} />
-              ))}
-            </div>
-          </div>
-        </div>
+            <span className="relative flex items-center gap-4">
+              Meet The Projects
+              <span
+                className="grid h-9 w-9 place-items-center rounded-full bg-black/24 text-white transition-transform duration-300 group-hover:translate-x-1"
+                aria-hidden
+              >
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14" />
+                  <path d="m13 6 6 6-6 6" />
+                </svg>
+              </span>
+            </span>
+          </Link>
+        </motion.div>
 
       </div>
 
@@ -174,128 +176,5 @@ export default function HeroSection() {
         </svg>
       </div>
     </section>
-  );
-}
-
-function TimelineItem({
-  item,
-  index,
-  total,
-}: {
-  item: (typeof TIMELINE)[0];
-  index: number;
-  total: number;
-}) {
-  const isDone     = item.status === "done";
-  const isCurrent  = item.status === "current";
-  const isVacation = item.status === "vacation";
-  const isLast     = index === total - 1;
-
-  const dotColor = isDone
-    ? "rgba(255,255,255,0.7)"
-    : isCurrent
-    ? "#ffffff"
-    : isVacation
-    ? "rgba(245,158,11,0.7)"
-    : "rgba(255,255,255,0.12)";
-
-  const lineColor = isDone
-    ? "rgba(255,255,255,0.20)"
-    : "rgba(255,255,255,0.05)";
-
-  const monthColor = isCurrent
-    ? "#ffffff"
-    : isDone
-    ? "rgba(255,255,255,0.55)"
-    : isVacation
-    ? "rgba(245,158,11,0.65)"
-    : "rgba(255,255,255,0.20)";
-
-  const labelColor = isCurrent
-    ? "rgba(255,255,255,0.60)"
-    : isDone
-    ? "rgba(255,255,255,0.28)"
-    : isVacation
-    ? "rgba(245,158,11,0.45)"
-    : "rgba(255,255,255,0.15)";
-
-  const DOT_CONTAINER = 56;
-  const dotSize = isCurrent ? 20 : isDone ? 14 : 10;
-
-  return (
-    <div className="flex items-start">
-      <div className="flex flex-col items-center">
-        {/* Dot */}
-        <div
-          className="relative flex items-center justify-center"
-          style={{ width: DOT_CONTAINER, height: DOT_CONTAINER }}
-        >
-          {isCurrent && (
-            <>
-              <div
-                className="absolute rounded-full"
-                style={{
-                  width: 36,
-                  height: 36,
-                  background: "rgba(255,255,255,0.06)",
-                  animation: "pulseRing 2.2s ease-out infinite",
-                }}
-              />
-              <div
-                className="absolute rounded-full"
-                style={{
-                  width: 28,
-                  height: 28,
-                  background: "rgba(255,255,255,0.04)",
-                  animation: "pulseRing 2.2s ease-out 0.5s infinite",
-                }}
-              />
-            </>
-          )}
-          <div
-            className="rounded-full"
-            style={{
-              width: dotSize,
-              height: dotSize,
-              background: dotColor,
-              boxShadow: isCurrent
-                ? "0 0 16px rgba(255,255,255,0.6), 0 0 32px rgba(255,255,255,0.2)"
-                : isDone
-                ? "0 0 8px rgba(255,255,255,0.2)"
-                : "none",
-            }}
-          />
-        </div>
-
-        {/* Month */}
-        <span
-          className="font-mono font-bold tracking-widest uppercase"
-          style={{ fontSize: 12, color: monthColor }}
-        >
-          {item.m}
-        </span>
-
-        {/* Label */}
-        <span
-          className="mt-1 whitespace-nowrap text-center leading-tight"
-          style={{ fontSize: 10, color: labelColor, maxWidth: 64 }}
-        >
-          {item.label}
-        </span>
-      </div>
-
-      {/* Connecting line */}
-      {!isLast && (
-        <div
-          className="flex-shrink-0"
-          style={{
-            width: 48,
-            height: 1,
-            marginTop: DOT_CONTAINER / 2,
-            background: lineColor,
-          }}
-        />
-      )}
-    </div>
   );
 }
